@@ -15,7 +15,7 @@ namespace Service.Implementations
         {
             var lat = "-12.0432";
             var lon = "-77.0282";
-            var APIkey = "602ecc88c1678054ed49eacf50dffd13";
+            var APIkey = "";
             string url = $"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}";
 
             using (HttpClient client = new HttpClient())
@@ -41,7 +41,7 @@ namespace Service.Implementations
         {
             var lat = "-12.0432";
             var lon = "-77.0282";
-            var APIkey = "602ecc88c1678054ed49eacf50dffd13";
+            var APIkey = "";
             string url = $"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}";
 
             using (HttpClient client = new HttpClient())
