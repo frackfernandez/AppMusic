@@ -600,7 +600,7 @@
             this.dataGridWeather.Name = "dataGridWeather";
             this.dataGridWeather.Size = new System.Drawing.Size(500, 420);
             this.dataGridWeather.TabIndex = 9;
-            this.dataGridWeather.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridWeather_CellContentClick);
+            this.dataGridWeather.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridWeather_CellContentClick);
             // 
             // ColumnIdWeather
             // 
@@ -795,7 +795,7 @@
             this.dataGridPlaylist.Name = "dataGridPlaylist";
             this.dataGridPlaylist.Size = new System.Drawing.Size(370, 420);
             this.dataGridPlaylist.TabIndex = 12;
-            this.dataGridPlaylist.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridPlaylist_CellContentClick);
+            this.dataGridPlaylist.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridPlaylist_CellContentClick);
             // 
             // ColumnIdPlaylist
             // 
@@ -968,7 +968,7 @@
             this.dataGridUser.Name = "dataGridUser";
             this.dataGridUser.Size = new System.Drawing.Size(520, 420);
             this.dataGridUser.TabIndex = 13;
-            this.dataGridUser.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUser_CellContentClick);
+            this.dataGridUser.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUser_CellContentClick);
             // 
             // ColumnIdUser
             // 

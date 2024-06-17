@@ -24,7 +24,7 @@ namespace Presentation
         {
             InitializeComponent();
             DesignForm();
-            LoadComboBox();
+            LoadAuthors();
         }
 
         private void UIAdmin_Load(object sender, EventArgs e)
@@ -50,55 +50,21 @@ namespace Presentation
             // ocultar el formulario en lugar de cerrarlo
             this.Hide();
         }
-
-        private void LoadComboBox()
-        {
-            cBoxCategorySong.Items.Clear();
-            var categoryList = Enum.GetNames(typeof(Category));
-            foreach ( var category in categoryList )
-            {
-                cBoxCategorySong.Items.Add(category);
-            } 
-            
-            cBoxAuthorSong.Items.Clear();
-            var authorList = appAuthor.ReadAuthor();
-            foreach ( var author in authorList )
-            {
-                cBoxAuthorSong.Items.Add(author.Name);
-            }
-
-            cBoxWeatherPlaylist.Items.Clear();
-            var weatherList = appWeather.ReadWeather();
-            foreach ( var weather in weatherList)
-            {
-                cBoxWeatherPlaylist.Items.Add(weather.Code);
-            }
-
-            listBoxAllSongPlaylist.Items.Clear();
-            var listSong = appSong.ReadSong();
-            foreach (var song in listSong)
-            {
-                listBoxAllSongPlaylist.Items.Add($"{song.Name.ToString()} - {song.Author.Name.ToString()}");
-            }
-
-            cBoxTypeUser.Items.Clear();
-            var typeUserList = Enum.GetNames(typeof(UserType));
-            foreach ( var type in typeUserList)
-            {
-                cBoxTypeUser.Items.Add(type);
-            }
-        }        
-
-        private void btnRefreshAuthor_Click(object sender, EventArgs e)
+                      
+        private void LoadAuthors()
         {
             dataGridAuthor.Rows.Clear();
 
             var listAuthor = appAuthor.ReadAuthor();
 
-            foreach(var row in listAuthor)
+            foreach (var row in listAuthor)
             {
                 dataGridAuthor.Rows.Add(row.Id.ToString(), row.Name.ToString());
             }
+        }
+        private void btnRefreshAuthor_Click(object sender, EventArgs e)
+        {
+            LoadAuthors();
         }
         private void dataGridAuthor_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -165,11 +131,15 @@ namespace Presentation
 
         private void btnRefreshSong_Click(object sender, EventArgs e)
         {
+            LoadSongs();
+        }
+        private void LoadSongs()
+        {
             dataGridSong.Rows.Clear();
 
             var listSong = appSong.ReadSong();
 
-            foreach ( var song in listSong)
+            foreach (var song in listSong)
             {
                 dataGridSong.Rows.Add(song.Id.ToString(), song.Name.ToString(), song.Category.ToString(), song.Author.Name.ToString(), song.TotalDuration.ToString());
             }
@@ -382,6 +352,10 @@ namespace Presentation
 
         private void btnRefreshWeather_Click(object sender, EventArgs e)
         {
+            LoadWeathers();
+        }
+        private void LoadWeathers()
+        {
             dataGridWeather.Rows.Clear();
 
             var listWeather = appWeather.ReadWeather();
@@ -474,14 +448,18 @@ namespace Presentation
 
         private void btnRefreshPlaylist_Click(object sender, EventArgs e)
         {
+            LoadPlaylists();                     
+        }
+        private void LoadPlaylists()
+        {
             dataGridPlaylist.Rows.Clear();
 
             var listPlaylist = appPlaylist.ReadPlaylist();
 
-            foreach ( var playlist in listPlaylist )
+            foreach (var playlist in listPlaylist)
             {
                 dataGridPlaylist.Rows.Add(playlist.Id.ToString(), playlist.Name.ToString(), playlist.Weather.Code.ToString());
-            }                       
+            }
         }
         private void dataGridPlaylist_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -669,6 +647,10 @@ namespace Presentation
 
         private void btnRefreshUser_Click(object sender, EventArgs e)
         {
+            LoadUsers();
+        }
+        private void LoadUsers()
+        {
             dataGridUser.Rows.Clear();
 
             var listUser = appUser.ReadUser();
@@ -789,7 +771,58 @@ namespace Presentation
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadComboBox();
+            var control = sender as TabControl;
+
+            switch (control.SelectedIndex)
+            {
+                case 0:
+                    LoadAuthors();
+                    break;
+                case 1:
+                    LoadSongs();
+                    cBoxCategorySong.Items.Clear();
+                    var categoryList = Enum.GetNames(typeof(Category));
+                    foreach (var category in categoryList)
+                    {
+                        cBoxCategorySong.Items.Add(category);
+                    }
+
+                    cBoxAuthorSong.Items.Clear();
+                    var authorList = appAuthor.ReadAuthor();
+                    foreach (var author in authorList)
+                    {
+                        cBoxAuthorSong.Items.Add(author.Name);
+                    }
+                    break;
+                case 2:
+                    LoadWeathers();
+                    break;
+                case 3: 
+                    LoadPlaylists();
+                    cBoxWeatherPlaylist.Items.Clear();
+                    var weatherList = appWeather.ReadWeather();
+                    foreach (var weather in weatherList)
+                    {
+                        cBoxWeatherPlaylist.Items.Add(weather.Code);
+                    }
+
+                    listBoxAllSongPlaylist.Items.Clear();
+                    var listSong = appSong.ReadSong();
+                    foreach (var song in listSong)
+                    {
+                        listBoxAllSongPlaylist.Items.Add($"{song.Name.ToString()} - {song.Author.Name.ToString()}");
+                    }
+                    break;
+                case 4:
+                    LoadUsers();
+                    cBoxTypeUser.Items.Clear();
+                    var typeUserList = Enum.GetNames(typeof(UserType));
+                    foreach (var type in typeUserList)
+                    {
+                        cBoxTypeUser.Items.Add(type);
+                    }
+                    break;
+            }
         }
 
         private void btnBack_Click(object sender, EventArgs e)
