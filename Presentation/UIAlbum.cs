@@ -6,51 +6,63 @@ using System.Linq;
 using System.Windows.Forms;
 using Business.Implementations;
 using CrossCutting.DTO;
+using CrossCutting.Enums;
 using NAudio.Wave;
 
 namespace Presentation
 {
     public partial class UIAlbum : Form
     {
-        ApplicationPlaylist appPlaylist = new ApplicationPlaylist();
-        ApplicationSong appSong = new ApplicationSong();
-        ApplicationAuthor appAuthor = new ApplicationAuthor();
-        ApplicationServiceWeather ASWeather = new ApplicationServiceWeather();
-
-        Random random = new Random();
-
-        UIAdmin adminForm = new UIAdmin();
+        private readonly ApplicationPlaylist appPlaylist;
+        private readonly ApplicationSong appSong;
+        private readonly ApplicationServiceWeather ASWeather;
+        private readonly Random random;
+        private readonly UIAdmin adminForm;
 
         private IWavePlayer waveOut;
         private AudioFileReader audioFileReader;
-        private bool isPaused = false;
         private Timer progressTimer;
 
-        int songindex = -1;
-        int playlistindex = -1;
+        private bool isPaused = false;
+
+        private int songindex = -1;
+        //private int playlistindex = -1;
+        public string songPlaying = "";
+        public string playlistPlaying = "";
+
+        public int userUsing = -1;
 
         public UIAlbum(User user)
         {
+            appPlaylist = new ApplicationPlaylist();
+            appSong = new ApplicationSong();
+            ASWeather = new ApplicationServiceWeather();
+            random = new Random();
+            adminForm = new UIAdmin(this);
+
             InitializeComponent();
             DesignForm();
-
-            pictureBox4.Visible = false; // boton pausa            
-
             SetUser(user);
-            SetWeather();            
+            userUsing = user.Id;
+
+            SetWeather();
             SetAllPlaylist();
 
+            IniProgressTimer();
+
+            pictureBox4.Visible = false; // boton pausa
+
+            SelectPlaylistWeather();
+        }        
+
+        private void IniProgressTimer()
+        {
             progressTimer = new Timer();
             progressTimer.Interval = 100; // 100 milisegundos
             progressTimer.Tick += new EventHandler(UpdateProgressBar); // suscribirse a eventos
-
-            playlistindex = SelectPlaylistWeather();
-            ShowPlaylist(playlistindex);
-
-            labelSongNow.Text = GetNameSong(GetPathSong(listBox1.Items[0].ToString()));
-            labelAuthorNow.Text = GetNameAuthor(GetPathSong(listBox1.Items[0].ToString()));
         }
 
+        // DISEÑO FORM                
         private void DesignForm()
         {
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -87,17 +99,14 @@ namespace Presentation
             panel2.Region = new Region(path);
         }
 
-        private void UIAlbum_Load(object sender, EventArgs e)
-        {
-
-        }
-
+        // INICIO
         private void SetUser(User user)
         {
             labelUsername.Text = user.Name;
             if (user.UserType == CrossCutting.Enums.UserType.User) 
             {
                 pictureBoxAdmin.Visible = false;
+                labelLibrary.Visible = false;
             }
         }
         private void SetWeather()
@@ -127,9 +136,15 @@ namespace Presentation
             {
                 pictureBoxWeather.Image = Presentation.Properties.Resources.sol;
             }
+            else if (wea.ToLower() == "haze" || wea.ToLower() == "mist")
+            {
+                pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+            }
         }
-        private void SetAllPlaylist()
+        public void SetAllPlaylist()
         {
+            listBoxAllPlaylist.Items.Clear();
+
             var list = appPlaylist.ReadPlaylist();
 
             foreach (var item in list)
@@ -137,38 +152,71 @@ namespace Presentation
                 listBoxAllPlaylist.Items.Add(item.Weather.Code + "  -  " +item.Name);
             }
         }
-        private int SelectPlaylistWeather()
+        private void SelectPlaylistWeather()
         {
             var weather = ASWeather.GetWeather();
-            var list = appPlaylist.ReadPlaylist().Where(x => x.Weather.Code == weather).ToList();
+            var allPlaylist = appPlaylist.ReadPlaylist();
 
-            int total = list.Count();
-            int select = random.Next(0, total);
+            if (allPlaylist.Count == 0)
+            {
+                listBox1.Items.Clear();
+                labelPlaylist.Text = "NO EXISTEN PLAYLIST!";
+                labelSongNow.Text = "...";
+                labelAuthorNow.Text = "...";
+                return;
+            }
 
-            var playlist = list[select].Id;
-            return playlist;
+            Enum.TryParse(weather, out Code code);
+
+            var list = allPlaylist.Where(x => x.Weather.Code == code).ToList();
+
+            if (list.Count() == 0)
+            {
+                var playlistSelect = allPlaylist.First();
+                ShowPlaylist(playlistSelect.Id);
+            }
+            else
+            {
+                int select = random.Next(0, list.Count());
+                var playlistSelect = list[select];
+                ShowPlaylist(playlistSelect.Id);
+            }            
         }
         private void ShowPlaylist(int id)
         {
-            listBox1.Items.Clear();
-            
+            listBox1.Items.Clear();          
+
             var playlist = appPlaylist.GetPlaylist(id);
 
             labelPlaylist.Text = playlist.Name;
+            playlistPlaying = playlist.Name;
 
             var songs = playlist.Songs;
+
+            songPlaying = songs[0].Name;
 
             foreach (var song in songs)
             {
                 listBox1.Items.Add(song.Name + " - " + song.Author.Name);
             }
+
+            labelSongNow.Text = songs[0].Name;
+            labelAuthorNow.Text = songs[0].Author.Name;
         }
 
+        // REPRODUCCION
         private void Play(string path)
         {
             if (waveOut == null)
             {
-                waveOut = new WaveOutEvent();
+                if (!File.Exists(path))
+                {
+                    MessageBox.Show("The song was registered in other Pc.");
+                    return;
+                }
+
+                waveOut = new WaveOutEvent();                
+
                 audioFileReader = new AudioFileReader(path);
                 waveOut.Init(audioFileReader);
 
@@ -180,8 +228,16 @@ namespace Presentation
                 labelTotal.Text = audioFileReader.TotalTime.ToString(@"mm\:ss");
                 progressTimer.Start();
 
-                labelSongNow.Text = GetNameSong(path);
-                labelAuthorNow.Text = GetNameAuthor(path);
+                var aux = Path.GetFileName(path);
+                var aux2 = aux.Split('.');
+                var id = Int32.Parse(aux2[0]);
+                var song = appSong.GetSong(id);
+
+                songPlaying = song.Name;
+
+                labelSongNow.Text = song.Name;
+                labelAuthorNow.Text = song.Author.Name;
+
                 pictureBox1.Visible = false;
                 pictureBox4.Visible = true;
             }
@@ -223,20 +279,14 @@ namespace Presentation
             // Siguiente cancion
             int total = listBox1.Items.Count - 1;
 
-            if (songindex == total)
+            if (songindex == total) // LLEGA SOLA A LA SIGUIENTE PLAYLIST
             {
                 SetWeather();
-
-                // selecciona la nueva playlist
-                int now = SelectPlaylistWeather();
-                if (playlistindex == now)
-                    now = SelectPlaylistWeather();
-
-                ShowPlaylist(now);
+                SelectPlaylistWeather();
 
                 songindex = 0;
-
                 listBox1.SelectedIndex = 0;
+
                 Play(GetPathSong(listBox1.Items[0].ToString()));
             }
             else if (songindex < total)
@@ -260,6 +310,10 @@ namespace Presentation
 
         private void pictureBox1_Click(object sender, EventArgs e) //PLAY
         {
+            if (listBox1.Items.Count <=0 )
+            {
+                return;
+            }          
             if (songindex == -1)
                 songindex = 0; listBox1.SelectedIndex = 0;
             string path = GetPathSong(listBox1.Items[0].ToString());
@@ -273,6 +327,9 @@ namespace Presentation
         private void pictureBox3_Click(object sender, EventArgs e) // SIGUIENTE
         {
             int total = listBox1.Items.Count - 1;
+
+            if (songindex == -1)
+                return;
 
             if (songindex == total)
             {
@@ -339,16 +396,18 @@ namespace Presentation
 
             var listplaylist = appPlaylist.ReadPlaylist();
             var playlist = listplaylist.Where(x => x.Name == namepl).First();
-            
+                        
             int id = playlist.Id;
 
             ShowPlaylist(id);
+            playlistPlaying = playlist.Name;
 
             listBox1.SelectedIndex = 0;
 
             string path = GetPathSong(listBox1.SelectedItem.ToString());
 
             songindex = listBox1.SelectedIndex;
+            songPlaying = playlist.Songs[0].Name;
 
             Stop();
             waveOut = null;
@@ -369,31 +428,21 @@ namespace Presentation
 
             return path;
         }
-        private string GetNameSong(string songFile)
-        {
-            var pre = Path.GetFileName(songFile).Split('.').First();
-            int id = Convert.ToInt32(pre);
-            var song = appSong.ReadSong().Where(x => x.Id == id).First();
-
-            return song.Name;   
-        }
-        private string GetNameAuthor(string songFile)
-        {
-            var pre = Path.GetFileName(songFile).Split('.').First();
-            int id = Convert.ToInt32(pre);
-            var song = appSong.ReadSong().Where(x => x.Id == id).First();
-
-            return song.Author.Name;
-        }
 
         private void pictureBox7_Click(object sender, EventArgs e) // LOG OUT
         {
+            this.Close();
             Application.Restart();
         }
         private void pictureBoxAdmin_Click(object sender, EventArgs e) // UI ADMIN
         {
             adminForm.Show();
             adminForm.BringToFront();
-        }        
+        }
+
+        private void pictureBox8_Click(object sender, EventArgs e) // REFRESHPLAYLISTSSS
+        {
+            SetAllPlaylist();
+        }
     }
 }

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CrossCutting.Enums;
 
 namespace CrossCutting
 {
     public class Weather
     {
-        public Weather(int id, string code, string description)
+        public Weather(int id, Code code, string description)
         {
             Id = id;
             Code = code;
@@ -16,7 +12,7 @@ namespace CrossCutting
         }
 
         public int Id { get; set; }
-        public string Code { get; set; }
+        public Code Code { get; set; }
         public string Description { get; set; }
     }
 }

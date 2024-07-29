@@ -1,19 +1,21 @@
 ﻿using Business.Interfaces;
 using CrossCutting;
+using CrossCutting.Enums;
 using Infrastructure.Implementations;
-using System;
+using Infrastructure.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
     public class ApplicationWeather : IApplicationWeather
     {
-        RepositoryWeather repWeather = new RepositoryWeather();
+        private readonly IRepositoryWeather repWeather;
 
-        public void CreateWeather(string code, string description)
+        public ApplicationWeather()
+        {
+            repWeather = new RepositoryWeather();
+        }
+        public void CreateWeather(Code code, string description)
         {
             repWeather.CreateWeather(code, description);
         }
@@ -27,13 +29,19 @@ namespace Business.Implementations
 
             return weather;
         }
+        public Weather GetWeather(string code)
+        {
+            var weather = repWeather.GetWeather(code);
+
+            return weather;
+        }
         public List<Weather> ReadWeather()
         {
             var list = repWeather.ReadWeather();
 
             return list;
         }
-        public void UpdateWeather(int id, string code, string description)
+        public void UpdateWeather(int id, Code code, string description)
         {
             repWeather.UpdateWeather(id, code, description);
         }

@@ -1,17 +1,19 @@
 ﻿using Business.Interfaces;
 using CrossCutting;
 using Infrastructure.Implementations;
-using System;
+using Infrastructure.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
     public class ApplicationAuthor : IApplicationAuthor
     {
-        RepositoryAuthor repAuthor = new RepositoryAuthor();
+        private readonly IRepositoryAuthor repAuthor;
+
+        public ApplicationAuthor()
+        {
+            repAuthor = new RepositoryAuthor();
+        }
 
         public void CreateAuthor(string name)
         {
@@ -24,6 +26,12 @@ namespace Business.Implementations
         public Author GetAuthor(int id)
         {
             var author = repAuthor.GetAuthor(id);
+
+            return author;
+        }
+        public Author GetAuthor(string name)
+        {
+            var author = repAuthor.GetAuthor(name);
 
             return author;
         }

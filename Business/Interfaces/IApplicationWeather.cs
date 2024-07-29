@@ -1,18 +1,16 @@
 ﻿using CrossCutting;
-using System;
+using CrossCutting.Enums;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
-    internal interface IApplicationWeather
+    public interface IApplicationWeather
     {
         List<Weather> ReadWeather();
-        void CreateWeather(string code, string description);
-        void UpdateWeather(int id, string code, string description);
+        void CreateWeather(Code code, string description);
+        void UpdateWeather(int id, Code code, string description);
         void DeleteWeather(int id);
         Weather GetWeather(int id);
+        Weather GetWeather(string code);
     }
 }

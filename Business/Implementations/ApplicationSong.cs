@@ -2,21 +2,23 @@
 using CrossCutting;
 using CrossCutting.Enums;
 using Infrastructure.Implementations;
-using System;
+using Infrastructure.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
     public class ApplicationSong : IApplicationSong
     {
-        RepositorySong repSong = new RepositorySong();
+        private readonly IRepositorySong repSong;
 
-        public void CreateSong(string name, Category category, Author author, string totalDuration)
+        public ApplicationSong()
         {
-            repSong.CreateSong(name, category, author, totalDuration);
+            repSong = new RepositorySong();
+        }
+
+        public void CreateSong(string name, Category category, Author author, string album, string totalDuration)
+        {
+            repSong.CreateSong(name, category, author, album, totalDuration);
         }
         public void DeleteSong(int id)
         {
@@ -34,9 +36,9 @@ namespace Business.Implementations
 
             return list;
         }
-        public void UpdateSong(int id, string name, Category category, Author author, string totalDuration)
+        public void UpdateSong(int id, string name, Category category, Author author, string album, string totalDuration)
         {
-            repSong.UpdateSong(id, name, category, author, totalDuration);
+            repSong.UpdateSong(id, name, category, author, album, totalDuration);
         }
 
         public List<Song> GetListSongs(int id) 

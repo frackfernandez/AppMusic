@@ -2,17 +2,20 @@
 using CrossCutting.DTO;
 using CrossCutting.Enums;
 using Infrastructure.Implementations;
-using System;
+using Infrastructure.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
     public class ApplicationUser : IApplicationUser
     {
-        RepositoryUser repUser = new RepositoryUser();
+        private readonly IRepositoryUser repUser;
+
+        public ApplicationUser()
+        {
+            repUser = new RepositoryUser();
+        }
+
         public void CreateUser(string name, UserType type, string password)
         {
             repUser.CreateUser(name, type, password);
@@ -26,6 +29,12 @@ namespace Business.Implementations
             var user = repUser.GetUser(id);
             return user;
         }
+
+        public User GetUser(string name, string password)
+        {
+            return repUser.GetUser(name, password);
+        }
+
         public List<User> ReadUser()
         {
             var list = repUser.ReadUser();

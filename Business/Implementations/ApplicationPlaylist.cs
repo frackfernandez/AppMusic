@@ -1,21 +1,22 @@
 ﻿using Business.Interfaces;
 using CrossCutting;
 using Infrastructure.Implementations;
-using System;
+using Infrastructure.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Implementations
 {
     public class ApplicationPlaylist : IApplicationPlaylist
     {
-        RepositoryPlaylist repPlaylist = new RepositoryPlaylist();
+        private readonly IRepositoryPlaylist repPlaylist;
 
-        public void CreatePlaylist(string name, Weather weather, List<Song> songs)
+        public ApplicationPlaylist()
         {
-            repPlaylist.CreatePlaylist(name, weather, songs);
+            repPlaylist = new RepositoryPlaylist();
+        }
+        public void CreatePlaylist(string name, Weather weather, string totalDuration, List<Song> songs)
+        {
+            repPlaylist.CreatePlaylist(name, weather, totalDuration, songs);
         }
         public void DeletePlaylist(int id)
         {
@@ -33,9 +34,9 @@ namespace Business.Implementations
 
             return list;
         }
-        public void UpdatePlaylist(int id, string name, Weather weather, List<Song> songs)
+        public void UpdatePlaylist(int id, string name, Weather weather, string totalDuration, List<Song> songs)
         {
-            repPlaylist.UpdatePlaylist(id, name, weather, songs);
+            repPlaylist.UpdatePlaylist(id, name, weather, totalDuration, songs);
         }
     }
 }

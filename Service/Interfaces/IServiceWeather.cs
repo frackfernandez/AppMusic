@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service.Interfaces
+﻿namespace Service.Interfaces
 {
-    internal interface IServiceWeather
+    public interface IServiceWeather
     {
         string GetWeather();
         string GetTemp();

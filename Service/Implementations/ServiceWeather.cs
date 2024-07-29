@@ -4,7 +4,6 @@ using Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
 using CrossCutting.DTO;
 
 namespace Service.Implementations

@@ -5,41 +5,50 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Infrastructure.Implementations
 {
     public class RepositorySong : IRepositorySong
     {
-        ConnectionDB connection = new ConnectionDB();
-        RepositoryAuthor repAuthor = new RepositoryAuthor();
+        private readonly SqlConnection connection;
+        private readonly RepositoryAuthor repAuthor;
 
-        public void CreateSong(string name, Category category, Author author, string totalDuration)
+        public RepositorySong()
         {
-            string query = "INSERT INTO Canciones (Nombre, Categoria, Autor, DuracionTotal) VALUES (@nombre, @categoria, @autor, @duracionTotal)";
+            connection = ConnectionDB.GetInstance().GetConnection();
+
+            repAuthor = new RepositoryAuthor();
+        }
+
+        public void CreateSong(string name, Category category, Author author, string album, string totalDuration)
+        {
+            string query = "INSERT INTO Canciones (Nombre, Categoria, Autor, Album, DuracionTotal) VALUES (@nombre, @categoria, @autor, @album, @duracionTotal)";
 
             string categoryStr = category.ToString();
             int authorInt = author.Id;
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@nombre", name);
                 command.Parameters.AddWithValue("@categoria", categoryStr);
                 command.Parameters.AddWithValue("@autor", authorInt);
+                command.Parameters.AddWithValue("@album", album);
                 command.Parameters.AddWithValue("@duracionTotal", totalDuration);
 
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
         public List<Song> ReadSong()
         {
             List<Song> listSongs = new List<Song>();
 
-            var listAuthors = repAuthor.ReadAuthor();
-
             var query = "SELECT * FROM Canciones";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            if (connection.State == 0)
+                connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -48,63 +57,102 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxCategory = fila["Categoria"].ToString();
-                        int auxIdAuthor = Convert.ToInt32(fila["Autor"]);
-                        
+                        string auxCategory = fila["Categoria"].ToString();                                                
                         Enum.TryParse(auxCategory, out Category categoryRes);
-                        
-                        var selectAuthor = listAuthors.Where(x => x.Id == auxIdAuthor).First();
 
-                        listSongs.Add(new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryRes, selectAuthor, fila["DuracionTotal"].ToString()));
+                        int idAuthor = Convert.ToInt32(fila["Autor"]);
+                        var author = repAuthor.GetAuthor(idAuthor);
+
+                        listSongs.Add(new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryRes, author, fila["Album"].ToString(), fila["DuracionTotal"].ToString()));
                     }
-                    return listSongs;
                 }
             }
+            connection.Close();
+
+            return listSongs;
         }
-        public void UpdateSong(int id, string name, Category category, Author author, string totalDuration)
+        public void UpdateSong(int id, string name, Category category, Author author, string album, string totalDuration)
         {
-            string query = "UPDATE Canciones SET Nombre = @nombre, Categoria = @categoria, Autor = @autor, DuracionTotal = @duracionTotal WHERE Id = @id";
+            string query = "UPDATE Canciones SET Nombre = @nombre, Categoria = @categoria, Autor = @autor, Album = @album, DuracionTotal = @duracionTotal WHERE Id = @id";
+
             string categoryStr = category.ToString();
             int authorInt = author.Id;
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
-            {
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {                
                 command.Parameters.AddWithValue("@id", id);
                 command.Parameters.AddWithValue("@nombre", name);
                 command.Parameters.AddWithValue("@categoria", categoryStr);
                 command.Parameters.AddWithValue("@autor", authorInt);
+                command.Parameters.AddWithValue("@album", album);
                 command.Parameters.AddWithValue("@duracionTotal", totalDuration);
 
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
         public void DeleteSong(int id)
         {
             string query = "DELETE FROM Canciones WHERE Id = @id";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", id);
 
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
+
         public Song GetSong(int id)
         {
-            var allSong = ReadSong();
-            var song = allSong.Where(x => x.Id == id).First();
+            Song song = null;
+
+            string query = "SELECT * FROM Canciones WHERE Id=@id";
+
+            string idStr = id.ToString();
+
+            if (connection.State == 0)
+                connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", idStr);
+
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    foreach (DataRow fila in dt.Rows)
+                    {
+                        string auxCategory = fila["Categoria"].ToString();
+                        Enum.TryParse(auxCategory, out Category categoryRes);
+
+                        int idAuthor = Convert.ToInt32(fila["Autor"]);
+                        var author = repAuthor.GetAuthor(idAuthor);
+
+                        song = new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryRes, author, fila["Album"].ToString(), fila["DuracionTotal"].ToString());
+                    }
+                }
+            }
+            connection.Close();
 
             return song;
         }
-
         public List<Song> GetListSongs(int id)
         {
             var listSongs = new List<Song>();
 
-            var query = $"SELECT * FROM PlaylistCanciones WHERE idPlaylist = {id}";
+            var query = "SELECT * FROM PlaylistCanciones WHERE idPlaylist=@id";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            string idStr = id.ToString();
+
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
+                command.Parameters.AddWithValue("@id", idStr);
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
                     var dt = new DataTable();
@@ -118,9 +166,11 @@ namespace Infrastructure.Implementations
 
                         listSongs.Add(auxSong);
                     }
-                    return listSongs;
                 }
             }
+            connection.Close();
+
+            return listSongs;
         }
     }
 }

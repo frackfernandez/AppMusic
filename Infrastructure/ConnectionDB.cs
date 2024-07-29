@@ -3,23 +3,23 @@ using System.Data.SqlClient;
 
 namespace Infrastructure
 {
-    internal class ConnectionDB
+    public class ConnectionDB
     {
-        string connectionString = "Data Source=.;Database=MusicPlayer;Integrated Security=True;TrustServerCertificate=True";
+        private static readonly Lazy<ConnectionDB> instance = new Lazy<ConnectionDB>(() => new ConnectionDB());
+
+        private ConnectionDB() { }
 
         public SqlConnection GetConnection()
         {
-            try
-            {
-                SqlConnection connection = new SqlConnection(connectionString);
-                connection.Open();
-                return connection;
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw;
-            }
+            
+            string connectionString = "Data Source=.;Database=MusicPlayer;Integrated Security=True;TrustServerCertificate=True";
+            
+            return new SqlConnection(connectionString);
+        }
+
+        public static ConnectionDB GetInstance()
+        {
+            return instance.Value;
         }
     }
 }

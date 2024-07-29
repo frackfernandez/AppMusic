@@ -52,11 +52,6 @@
             this.btnRegisterSong = new System.Windows.Forms.Button();
             this.btnRefreshSong = new System.Windows.Forms.Button();
             this.dataGridSong = new System.Windows.Forms.DataGridView();
-            this.ColumnIdSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnNameSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnCategorySong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnAuthorSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnTotalDurationSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textTotalDurationSong = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cBoxAuthorSong = new System.Windows.Forms.ComboBox();
@@ -68,6 +63,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.cBoxCodeWeather = new System.Windows.Forms.ComboBox();
             this.btnDeleteWeather = new System.Windows.Forms.Button();
             this.btnUpdateWeather = new System.Windows.Forms.Button();
             this.btnRegisterWeather = new System.Windows.Forms.Button();
@@ -79,7 +75,6 @@
             this.ColumnDescriptionWeather = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textDescriptionWeather = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.textCodeWeather = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.textIdWeather = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -94,9 +89,6 @@
             this.btnClearPlaylist = new System.Windows.Forms.Button();
             this.btnRefreshPlaylist = new System.Windows.Forms.Button();
             this.dataGridPlaylist = new System.Windows.Forms.DataGridView();
-            this.ColumnIdPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnNamePlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnWeatherPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label15 = new System.Windows.Forms.Label();
             this.listBoxSongPlaylist = new System.Windows.Forms.ListBox();
             this.cBoxWeatherPlaylist = new System.Windows.Forms.ComboBox();
@@ -125,6 +117,18 @@
             this.textIdUser = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.btnBack = new System.Windows.Forms.Button();
+            this.ColumnIdPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnNamePlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnWeatherPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnDurationPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label21 = new System.Windows.Forms.Label();
+            this.textAlbumSong = new System.Windows.Forms.TextBox();
+            this.ColumnIdSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnNameSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnCategorySong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnAuthorSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnAlbumSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnTotalDurationSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAuthor)).BeginInit();
@@ -233,6 +237,7 @@
             this.ColumnName});
             this.dataGridAuthor.Location = new System.Drawing.Point(669, 50);
             this.dataGridAuthor.Name = "dataGridAuthor";
+            this.dataGridAuthor.ReadOnly = true;
             this.dataGridAuthor.Size = new System.Drawing.Size(375, 420);
             this.dataGridAuthor.TabIndex = 4;
             this.dataGridAuthor.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridAuthor_CellClick);
@@ -241,12 +246,14 @@
             // 
             this.ColumnId.HeaderText = "Id";
             this.ColumnId.Name = "ColumnId";
+            this.ColumnId.ReadOnly = true;
             this.ColumnId.Width = 75;
             // 
             // ColumnName
             // 
             this.ColumnName.HeaderText = "Name";
             this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
             this.ColumnName.Width = 225;
             // 
             // textNameAuthor
@@ -284,6 +291,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.textAlbumSong);
+            this.tabPage2.Controls.Add(this.label21);
             this.tabPage2.Controls.Add(this.textFileSong);
             this.tabPage2.Controls.Add(this.label8);
             this.tabPage2.Controls.Add(this.btnUploadSong);
@@ -313,7 +322,7 @@
             // 
             // textFileSong
             // 
-            this.textFileSong.Location = new System.Drawing.Point(10, 290);
+            this.textFileSong.Location = new System.Drawing.Point(10, 340);
             this.textFileSong.Name = "textFileSong";
             this.textFileSong.ReadOnly = true;
             this.textFileSong.Size = new System.Drawing.Size(300, 23);
@@ -322,7 +331,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 270);
+            this.label8.Location = new System.Drawing.Point(10, 320);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 15);
             this.label8.TabIndex = 18;
@@ -330,7 +339,7 @@
             // 
             // btnUploadSong
             // 
-            this.btnUploadSong.Location = new System.Drawing.Point(10, 320);
+            this.btnUploadSong.Location = new System.Drawing.Point(10, 370);
             this.btnUploadSong.Name = "btnUploadSong";
             this.btnUploadSong.Size = new System.Drawing.Size(75, 23);
             this.btnUploadSong.TabIndex = 17;
@@ -396,45 +405,18 @@
             this.ColumnNameSong,
             this.ColumnCategorySong,
             this.ColumnAuthorSong,
+            this.ColumnAlbumSong,
             this.ColumnTotalDurationSong});
             this.dataGridSong.Location = new System.Drawing.Point(368, 50);
             this.dataGridSong.Name = "dataGridSong";
+            this.dataGridSong.ReadOnly = true;
             this.dataGridSong.Size = new System.Drawing.Size(675, 420);
             this.dataGridSong.TabIndex = 11;
             this.dataGridSong.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSong_CellContentClick);
             // 
-            // ColumnIdSong
-            // 
-            this.ColumnIdSong.HeaderText = "Id";
-            this.ColumnIdSong.Name = "ColumnIdSong";
-            this.ColumnIdSong.Width = 50;
-            // 
-            // ColumnNameSong
-            // 
-            this.ColumnNameSong.HeaderText = "Name";
-            this.ColumnNameSong.Name = "ColumnNameSong";
-            this.ColumnNameSong.Width = 200;
-            // 
-            // ColumnCategorySong
-            // 
-            this.ColumnCategorySong.HeaderText = "Category";
-            this.ColumnCategorySong.Name = "ColumnCategorySong";
-            // 
-            // ColumnAuthorSong
-            // 
-            this.ColumnAuthorSong.HeaderText = "Author";
-            this.ColumnAuthorSong.Name = "ColumnAuthorSong";
-            this.ColumnAuthorSong.Width = 175;
-            // 
-            // ColumnTotalDurationSong
-            // 
-            this.ColumnTotalDurationSong.HeaderText = "Total Duration";
-            this.ColumnTotalDurationSong.Name = "ColumnTotalDurationSong";
-            this.ColumnTotalDurationSong.Width = 75;
-            // 
             // textTotalDurationSong
             // 
-            this.textTotalDurationSong.Location = new System.Drawing.Point(10, 240);
+            this.textTotalDurationSong.Location = new System.Drawing.Point(10, 290);
             this.textTotalDurationSong.Name = "textTotalDurationSong";
             this.textTotalDurationSong.ReadOnly = true;
             this.textTotalDurationSong.Size = new System.Drawing.Size(300, 23);
@@ -443,7 +425,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 220);
+            this.label7.Location = new System.Drawing.Point(10, 270);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(104, 15);
             this.label7.TabIndex = 9;
@@ -520,6 +502,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.cBoxCodeWeather);
             this.tabPage3.Controls.Add(this.btnDeleteWeather);
             this.tabPage3.Controls.Add(this.btnUpdateWeather);
             this.tabPage3.Controls.Add(this.btnRegisterWeather);
@@ -528,7 +511,6 @@
             this.tabPage3.Controls.Add(this.dataGridWeather);
             this.tabPage3.Controls.Add(this.textDescriptionWeather);
             this.tabPage3.Controls.Add(this.label11);
-            this.tabPage3.Controls.Add(this.textCodeWeather);
             this.tabPage3.Controls.Add(this.label10);
             this.tabPage3.Controls.Add(this.textIdWeather);
             this.tabPage3.Controls.Add(this.label9);
@@ -538,6 +520,15 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Weathers";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // cBoxCodeWeather
+            // 
+            this.cBoxCodeWeather.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cBoxCodeWeather.FormattingEnabled = true;
+            this.cBoxCodeWeather.Location = new System.Drawing.Point(10, 88);
+            this.cBoxCodeWeather.Name = "cBoxCodeWeather";
+            this.cBoxCodeWeather.Size = new System.Drawing.Size(300, 23);
+            this.cBoxCodeWeather.TabIndex = 19;
             // 
             // btnDeleteWeather
             // 
@@ -598,6 +589,7 @@
             this.ColumnDescriptionWeather});
             this.dataGridWeather.Location = new System.Drawing.Point(540, 50);
             this.dataGridWeather.Name = "dataGridWeather";
+            this.dataGridWeather.ReadOnly = true;
             this.dataGridWeather.Size = new System.Drawing.Size(500, 420);
             this.dataGridWeather.TabIndex = 9;
             this.dataGridWeather.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridWeather_CellContentClick);
@@ -606,18 +598,21 @@
             // 
             this.ColumnIdWeather.HeaderText = "Id";
             this.ColumnIdWeather.Name = "ColumnIdWeather";
+            this.ColumnIdWeather.ReadOnly = true;
             this.ColumnIdWeather.Width = 75;
             // 
             // ColumnCodeWeather
             // 
             this.ColumnCodeWeather.HeaderText = "Code";
             this.ColumnCodeWeather.Name = "ColumnCodeWeather";
+            this.ColumnCodeWeather.ReadOnly = true;
             this.ColumnCodeWeather.Width = 150;
             // 
             // ColumnDescriptionWeather
             // 
             this.ColumnDescriptionWeather.HeaderText = "Description";
             this.ColumnDescriptionWeather.Name = "ColumnDescriptionWeather";
+            this.ColumnDescriptionWeather.ReadOnly = true;
             this.ColumnDescriptionWeather.Width = 200;
             // 
             // textDescriptionWeather
@@ -635,13 +630,6 @@
             this.label11.Size = new System.Drawing.Size(87, 15);
             this.label11.TabIndex = 7;
             this.label11.Text = "Description:";
-            // 
-            // textCodeWeather
-            // 
-            this.textCodeWeather.Location = new System.Drawing.Point(10, 90);
-            this.textCodeWeather.Name = "textCodeWeather";
-            this.textCodeWeather.Size = new System.Drawing.Size(300, 23);
-            this.textCodeWeather.TabIndex = 6;
             // 
             // label10
             // 
@@ -718,7 +706,7 @@
             // 
             // btnAddSongPlaylist
             // 
-            this.btnAddSongPlaylist.Location = new System.Drawing.Point(464, 410);
+            this.btnAddSongPlaylist.Location = new System.Drawing.Point(445, 410);
             this.btnAddSongPlaylist.Name = "btnAddSongPlaylist";
             this.btnAddSongPlaylist.Size = new System.Drawing.Size(75, 23);
             this.btnAddSongPlaylist.TabIndex = 22;
@@ -730,7 +718,7 @@
             // 
             this.listBoxAllSongPlaylist.FormattingEnabled = true;
             this.listBoxAllSongPlaylist.ItemHeight = 15;
-            this.listBoxAllSongPlaylist.Location = new System.Drawing.Point(350, 100);
+            this.listBoxAllSongPlaylist.Location = new System.Drawing.Point(333, 100);
             this.listBoxAllSongPlaylist.Name = "listBoxAllSongPlaylist";
             this.listBoxAllSongPlaylist.Size = new System.Drawing.Size(300, 304);
             this.listBoxAllSongPlaylist.TabIndex = 21;
@@ -758,7 +746,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(350, 80);
+            this.label16.Location = new System.Drawing.Point(330, 82);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(79, 15);
             this.label16.TabIndex = 18;
@@ -776,7 +764,7 @@
             // 
             // btnRefreshPlaylist
             // 
-            this.btnRefreshPlaylist.Location = new System.Drawing.Point(670, 20);
+            this.btnRefreshPlaylist.Location = new System.Drawing.Point(652, 20);
             this.btnRefreshPlaylist.Name = "btnRefreshPlaylist";
             this.btnRefreshPlaylist.Size = new System.Drawing.Size(75, 23);
             this.btnRefreshPlaylist.TabIndex = 14;
@@ -790,29 +778,14 @@
             this.dataGridPlaylist.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnIdPlaylist,
             this.ColumnNamePlaylist,
-            this.ColumnWeatherPlaylist});
-            this.dataGridPlaylist.Location = new System.Drawing.Point(670, 50);
+            this.ColumnWeatherPlaylist,
+            this.ColumnDurationPlaylist});
+            this.dataGridPlaylist.Location = new System.Drawing.Point(652, 50);
             this.dataGridPlaylist.Name = "dataGridPlaylist";
-            this.dataGridPlaylist.Size = new System.Drawing.Size(370, 420);
+            this.dataGridPlaylist.ReadOnly = true;
+            this.dataGridPlaylist.Size = new System.Drawing.Size(388, 420);
             this.dataGridPlaylist.TabIndex = 12;
             this.dataGridPlaylist.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridPlaylist_CellContentClick);
-            // 
-            // ColumnIdPlaylist
-            // 
-            this.ColumnIdPlaylist.HeaderText = "Id";
-            this.ColumnIdPlaylist.Name = "ColumnIdPlaylist";
-            this.ColumnIdPlaylist.Width = 50;
-            // 
-            // ColumnNamePlaylist
-            // 
-            this.ColumnNamePlaylist.HeaderText = "Name";
-            this.ColumnNamePlaylist.Name = "ColumnNamePlaylist";
-            this.ColumnNamePlaylist.Width = 150;
-            // 
-            // ColumnWeatherPlaylist
-            // 
-            this.ColumnWeatherPlaylist.HeaderText = "Weather";
-            this.ColumnWeatherPlaylist.Name = "ColumnWeatherPlaylist";
             // 
             // label15
             // 
@@ -966,6 +939,7 @@
             this.ColumnPasswordUser});
             this.dataGridUser.Location = new System.Drawing.Point(522, 50);
             this.dataGridUser.Name = "dataGridUser";
+            this.dataGridUser.ReadOnly = true;
             this.dataGridUser.Size = new System.Drawing.Size(520, 420);
             this.dataGridUser.TabIndex = 13;
             this.dataGridUser.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUser_CellContentClick);
@@ -974,23 +948,27 @@
             // 
             this.ColumnIdUser.HeaderText = "Id";
             this.ColumnIdUser.Name = "ColumnIdUser";
+            this.ColumnIdUser.ReadOnly = true;
             this.ColumnIdUser.Width = 50;
             // 
             // ColumnNameUser
             // 
             this.ColumnNameUser.HeaderText = "Name";
             this.ColumnNameUser.Name = "ColumnNameUser";
+            this.ColumnNameUser.ReadOnly = true;
             this.ColumnNameUser.Width = 150;
             // 
             // ColumnTypeUser
             // 
             this.ColumnTypeUser.HeaderText = "Type";
             this.ColumnTypeUser.Name = "ColumnTypeUser";
+            this.ColumnTypeUser.ReadOnly = true;
             // 
             // ColumnPasswordUser
             // 
             this.ColumnPasswordUser.HeaderText = "Password";
             this.ColumnPasswordUser.Name = "ColumnPasswordUser";
+            this.ColumnPasswordUser.ReadOnly = true;
             this.ColumnPasswordUser.Width = 150;
             // 
             // label20
@@ -1071,6 +1049,90 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
+            // ColumnIdPlaylist
+            // 
+            this.ColumnIdPlaylist.HeaderText = "Id";
+            this.ColumnIdPlaylist.Name = "ColumnIdPlaylist";
+            this.ColumnIdPlaylist.ReadOnly = true;
+            this.ColumnIdPlaylist.Width = 50;
+            // 
+            // ColumnNamePlaylist
+            // 
+            this.ColumnNamePlaylist.HeaderText = "Name";
+            this.ColumnNamePlaylist.Name = "ColumnNamePlaylist";
+            this.ColumnNamePlaylist.ReadOnly = true;
+            this.ColumnNamePlaylist.Width = 125;
+            // 
+            // ColumnWeatherPlaylist
+            // 
+            this.ColumnWeatherPlaylist.HeaderText = "Weather";
+            this.ColumnWeatherPlaylist.Name = "ColumnWeatherPlaylist";
+            this.ColumnWeatherPlaylist.ReadOnly = true;
+            // 
+            // ColumnDurationPlaylist
+            // 
+            this.ColumnDurationPlaylist.HeaderText = "Duration";
+            this.ColumnDurationPlaylist.Name = "ColumnDurationPlaylist";
+            this.ColumnDurationPlaylist.ReadOnly = true;
+            this.ColumnDurationPlaylist.Width = 75;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(10, 220);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(52, 15);
+            this.label21.TabIndex = 20;
+            this.label21.Text = "Album:";
+            // 
+            // textAlbumSong
+            // 
+            this.textAlbumSong.Location = new System.Drawing.Point(10, 240);
+            this.textAlbumSong.Name = "textAlbumSong";
+            this.textAlbumSong.Size = new System.Drawing.Size(300, 23);
+            this.textAlbumSong.TabIndex = 21;
+            // 
+            // ColumnIdSong
+            // 
+            this.ColumnIdSong.HeaderText = "Id";
+            this.ColumnIdSong.Name = "ColumnIdSong";
+            this.ColumnIdSong.ReadOnly = true;
+            this.ColumnIdSong.Width = 50;
+            // 
+            // ColumnNameSong
+            // 
+            this.ColumnNameSong.HeaderText = "Name";
+            this.ColumnNameSong.Name = "ColumnNameSong";
+            this.ColumnNameSong.ReadOnly = true;
+            this.ColumnNameSong.Width = 165;
+            // 
+            // ColumnCategorySong
+            // 
+            this.ColumnCategorySong.HeaderText = "Category";
+            this.ColumnCategorySong.Name = "ColumnCategorySong";
+            this.ColumnCategorySong.ReadOnly = true;
+            this.ColumnCategorySong.Width = 85;
+            // 
+            // ColumnAuthorSong
+            // 
+            this.ColumnAuthorSong.HeaderText = "Author";
+            this.ColumnAuthorSong.Name = "ColumnAuthorSong";
+            this.ColumnAuthorSong.ReadOnly = true;
+            this.ColumnAuthorSong.Width = 150;
+            // 
+            // ColumnAlbumSong
+            // 
+            this.ColumnAlbumSong.HeaderText = "Album";
+            this.ColumnAlbumSong.Name = "ColumnAlbumSong";
+            this.ColumnAlbumSong.ReadOnly = true;
+            // 
+            // ColumnTotalDurationSong
+            // 
+            this.ColumnTotalDurationSong.HeaderText = "Total Duration";
+            this.ColumnTotalDurationSong.Name = "ColumnTotalDurationSong";
+            this.ColumnTotalDurationSong.ReadOnly = true;
+            this.ColumnTotalDurationSong.Width = 75;
+            // 
             // UIAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1130,11 +1192,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.DataGridView dataGridSong;
         private System.Windows.Forms.Button btnRefreshSong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIdSong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNameSong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCategorySong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnAuthorSong;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTotalDurationSong;
         private System.Windows.Forms.Button btnRegisterSong;
         private System.Windows.Forms.Button btnClearSong;
         private System.Windows.Forms.Button btnUpdateSong;
@@ -1144,7 +1201,6 @@
         private System.Windows.Forms.Button btnUploadSong;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox textIdWeather;
-        private System.Windows.Forms.TextBox textCodeWeather;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textDescriptionWeather;
         private System.Windows.Forms.Label label11;
@@ -1166,9 +1222,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ListBox listBoxSongPlaylist;
         private System.Windows.Forms.DataGridView dataGridPlaylist;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIdPlaylist;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNamePlaylist;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnWeatherPlaylist;
         private System.Windows.Forms.Button btnRefreshPlaylist;
         private System.Windows.Forms.Button btnClearPlaylist;
         private System.Windows.Forms.Label label16;
@@ -1200,5 +1253,18 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.Button btnBack;
+        private System.Windows.Forms.ComboBox cBoxCodeWeather;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIdPlaylist;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNamePlaylist;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnWeatherPlaylist;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDurationPlaylist;
+        private System.Windows.Forms.TextBox textAlbumSong;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIdSong;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNameSong;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCategorySong;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnAuthorSong;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnAlbumSong;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTotalDurationSong;
     }
 }

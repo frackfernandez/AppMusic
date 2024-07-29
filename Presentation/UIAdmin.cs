@@ -14,22 +14,32 @@ namespace Presentation
 {
     public partial class UIAdmin : Form
     {
-        ApplicationAuthor appAuthor = new ApplicationAuthor();
-        ApplicationSong appSong = new ApplicationSong();
-        ApplicationWeather appWeather = new ApplicationWeather();
-        ApplicationPlaylist appPlaylist = new ApplicationPlaylist();
-        ApplicationUser appUser = new ApplicationUser();
+        private readonly ApplicationAuthor appAuthor;
+        private readonly ApplicationSong appSong;
+        private readonly ApplicationWeather appWeather;
+        private readonly ApplicationPlaylist appPlaylist;
+        private readonly ApplicationUser appUser;
 
-        public UIAdmin()
+        private UIAlbum uiAlbum;
+
+        public UIAdmin(UIAlbum uiAlbum)
         {
             InitializeComponent();
             DesignForm();
+
+            this.uiAlbum = uiAlbum;
+
+            appAuthor = new ApplicationAuthor();
+            appSong = new ApplicationSong();
+            appWeather = new ApplicationWeather();
+            appPlaylist = new ApplicationPlaylist();
+            appUser = new ApplicationUser();
+
             LoadAuthors();
         }
 
         private void UIAdmin_Load(object sender, EventArgs e)
         {
-
         }
 
         private void DesignForm()
@@ -69,7 +79,11 @@ namespace Presentation
         private void dataGridAuthor_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var indexRow = e.RowIndex;
+            if (indexRow == -1)
+                return;
             DataGridViewRow row = dataGridAuthor.Rows[indexRow];
+            if (row.Cells[0].Value is null)
+                return;
             textIdAuthor.Text = row.Cells[0].Value.ToString();
             textNameAuthor.Text = row.Cells[1].Value.ToString();
         }
@@ -115,14 +129,19 @@ namespace Presentation
             MessageBox.Show("Successful update!");
         }
         private void btnDeleteAuthor_Click(object sender, EventArgs e)
-        {
-            if (textIdAuthor.Text == "")
+        {    
+            int id = Convert.ToInt32(textIdAuthor.Text);
+
+            // Validación autor tiene canciones
+            var songs = appSong.ReadSong();
+            bool tienecanciones = songs.Any(x => x.Author.Id == id);
+
+            if (tienecanciones)
             {
-                MessageBox.Show("Id empty!");
+                MessageBox.Show("This author has songs.");
                 return;
             }
 
-            int id = Convert.ToInt32(textIdAuthor.Text);
             appAuthor.DeleteAuthor(id);
             textIdAuthor.Text = "";
             textNameAuthor.Text = "";
@@ -141,29 +160,27 @@ namespace Presentation
 
             foreach (var song in listSong)
             {
-                dataGridSong.Rows.Add(song.Id.ToString(), song.Name.ToString(), song.Category.ToString(), song.Author.Name.ToString(), song.TotalDuration.ToString());
+                dataGridSong.Rows.Add(song.Id.ToString(), song.Name.ToString(), song.Category.ToString(), song.Author.Name.ToString(), song.Album.ToString(),song.TotalDuration.ToString());
             }
         }
         private void dataGridSong_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             var indexRow = e.RowIndex;
+            if (indexRow == -1)
+                return;
             DataGridViewRow row = dataGridSong.Rows[indexRow];
+            if (row.Cells[0].Value is null)
+                return;
             textIdSong.Text = row.Cells[0].Value.ToString();
             textNameSong.Text = row.Cells[1].Value.ToString();
             cBoxCategorySong.Text = row.Cells[2].Value.ToString();
             cBoxAuthorSong.Text = row.Cells[3].Value.ToString();
-            textTotalDurationSong.Text = row.Cells[4].Value.ToString();
+            textAlbumSong.Text = row.Cells[4].Value.ToString();
+            textTotalDurationSong.Text = row.Cells[5].Value.ToString();
 
-            string nameAuthor = row.Cells[3].Value.ToString();
-            var listAuthor = appAuthor.ReadAuthor();
-            var author = listAuthor.Where(x => x.Name == nameAuthor).First();
+            var id = row.Cells[0].Value.ToString();
 
-            string nameSong = row.Cells[1].Value.ToString();
-            var listSong = appSong.ReadSong();
-            var songs = listSong.Where(x => x.Name == nameSong).ToList();
-            var song = songs.Where(x => x.Author.Id == author.Id).FirstOrDefault();
-
-            string file = $@"{Directory.GetCurrentDirectory()}\Music\{song.Id}-{author.Id}.mp3";
+            string file = $@"{Directory.GetCurrentDirectory()}\Music\{id}.mp3";
             
             if (File.Exists(file))
                 textFileSong.Text = file;
@@ -192,6 +209,11 @@ namespace Presentation
                 MessageBox.Show("Author empty!");
                 return;
             }
+            if (textAlbumSong.Text == "")
+            {
+                MessageBox.Show("Album empty!");
+                return;
+            }
             if (textTotalDurationSong.Text == "")
             {
                 MessageBox.Show("Total Duration empty!");
@@ -204,12 +226,12 @@ namespace Presentation
             }
 
             Enum.TryParse(cBoxCategorySong.Text, out Category category);
+            
+            var author = appAuthor.GetAuthor(cBoxAuthorSong.Text);
 
-            var listAuthor = appAuthor.ReadAuthor();
-            var author = listAuthor.Where(x => x.Name == cBoxAuthorSong.Text).First();
+            appSong.CreateSong(textNameSong.Text,category,author,textAlbumSong.Text,textTotalDurationSong.Text);
 
-            appSong.CreateSong(textNameSong.Text,category,author,textTotalDurationSong.Text);
-
+            //here optimizar - Obtener el ultimo Id
             string nameSong = textNameSong.Text;
             var listSong = appSong.ReadSong();
             var songs = listSong.Where(x => x.Name == nameSong).ToList();
@@ -222,6 +244,7 @@ namespace Presentation
             textNameSong.Text = "";
             cBoxCategorySong.SelectedIndex = -1;
             cBoxAuthorSong.SelectedIndex = -1;
+            textAlbumSong.Text = "";
             textTotalDurationSong.Text = "";
             textFileSong.Text = "";
             MessageBox.Show("Successful registration!");
@@ -232,6 +255,7 @@ namespace Presentation
             textNameSong.Text = "";
             cBoxCategorySong.SelectedIndex = -1;
             cBoxAuthorSong.SelectedIndex = -1;
+            textAlbumSong.Text = "";
             textTotalDurationSong.Text = "";
             textFileSong.Text = "";
         }
@@ -242,6 +266,16 @@ namespace Presentation
                 MessageBox.Show("Id empty!");
                 return;
             }
+
+            int id = Convert.ToInt32(textIdSong.Text);
+
+            var song = appSong.GetSong(id);
+            if (song.Name == uiAlbum.songPlaying)
+            {
+                MessageBox.Show("This song is playing.");
+                return;
+            }
+
             if (textNameSong.Text == "")
             {
                 MessageBox.Show("Name empty!");
@@ -255,6 +289,11 @@ namespace Presentation
             if (cBoxAuthorSong.Text == "")
             {
                 MessageBox.Show("Author empty!");
+                return;
+            }
+            if (textAlbumSong.Text == "")
+            {
+                MessageBox.Show("Album empty!");
                 return;
             }
             if (textTotalDurationSong.Text == "")
@@ -276,29 +315,34 @@ namespace Presentation
             {
                 MessageBox.Show("File empty!");
                 return;
-            }
-
-            int.TryParse(textIdSong.Text, out int id);
+            }            
 
             Enum.TryParse(cBoxCategorySong.Text, out Category category);
+                        
+            var author = appAuthor.GetAuthor(cBoxAuthorSong.Text);                 
 
-            var listAuthor = appAuthor.ReadAuthor();
-            var author = listAuthor.Where(x => x.Name == cBoxAuthorSong.Text).First();
+            string newFile = $@"{Directory.GetCurrentDirectory()}\Music\{id}.mp3";
 
-            appSong.UpdateSong(id, textNameSong.Text, category, author, textTotalDurationSong.Text);
+            if(textFileSong.Text != newFile)
+            {
+                try
+                {
+                    File.Copy(textFileSong.Text, newFile, true);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("The song is playing!");
+                    return;
+                }
+            }            
 
-            string nameSong = textNameSong.Text;
-            var listSong = appSong.ReadSong();
-            var songs = listSong.Where(x => x.Name == nameSong).ToList();
-            var song = songs.Where(x => x.Author.Id == author.Id).FirstOrDefault();
-
-            string newFile = $@"{Directory.GetCurrentDirectory()}\Music\{song.Id}.mp3";
-            File.Copy(textFileSong.Text, newFile, true);
+            appSong.UpdateSong(id, textNameSong.Text, category, author, textAlbumSong.Text, textTotalDurationSong.Text);
 
             textIdSong.Text = "";
             textNameSong.Text = "";
             cBoxCategorySong.SelectedIndex = -1;
             cBoxAuthorSong.SelectedIndex = -1;
+            textAlbumSong.Text = "";
             textTotalDurationSong.Text = "";
             textFileSong.Text = "";
             MessageBox.Show("Successful update!");
@@ -312,12 +356,34 @@ namespace Presentation
             }
 
             int id = Convert.ToInt32(textIdSong.Text);
+
+            var songP = appSong.GetSong(id);
+            if (songP.Name == uiAlbum.songPlaying)
+            {
+                MessageBox.Show("This song is playing.");
+                return;
+            }
+
+            var playlists = appPlaylist.ReadPlaylist();
+            foreach (var playlist in playlists)
+            {
+                foreach (var song in playlist.Songs)
+                {
+                    if (song.Id == id)
+                    {
+                        MessageBox.Show("This song is registered in a playlist.");
+                        return;
+                    }
+                }
+            }
+            
             appSong.DeleteSong(id);
 
             textIdSong.Text = "";
             textNameSong.Text = "";
             cBoxCategorySong.SelectedIndex = -1;
             cBoxAuthorSong.SelectedIndex = -1;
+            textAlbumSong.Text = "";
             textTotalDurationSong.Text = "";
             textFileSong.Text = "";
             MessageBox.Show("Successful deleted!");
@@ -340,7 +406,7 @@ namespace Presentation
                     textTotalDurationSong.Text = duration.ToString(@"mm\:ss");
                 }
             }
-            catch (ArgumentException ae)
+            catch (ArgumentException)
             {
                 MessageBox.Show("Song no select");
             }
@@ -368,9 +434,13 @@ namespace Presentation
         private void dataGridWeather_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             var indexRow = e.RowIndex;
+            if (indexRow == -1)
+                return;
             DataGridViewRow row = dataGridWeather.Rows[indexRow];
+            if (row.Cells[0].Value is null)
+                return;
             textIdWeather.Text = row.Cells[0].Value.ToString();
-            textCodeWeather.Text = row.Cells[1].Value.ToString();
+            cBoxCodeWeather.Text = row.Cells[1].Value.ToString();
             textDescriptionWeather.Text = row.Cells[2].Value.ToString();
         }
         private void btnRegisterWeather_Click(object sender, EventArgs e)
@@ -380,7 +450,7 @@ namespace Presentation
                 MessageBox.Show("Id registered!");
                 return;
             }
-            if (textCodeWeather.Text == "")
+            if (cBoxCodeWeather.Text == "")
             {
                 MessageBox.Show("Code empty!");
                 return;
@@ -391,17 +461,27 @@ namespace Presentation
                 return;
             }
 
-            appWeather.CreateWeather(textCodeWeather.Text, textDescriptionWeather.Text);
+            Enum.TryParse(cBoxCodeWeather.Text, out Code code);
+
+            // Validación Code unico
+            var codeBd = appWeather.GetWeather(cBoxCodeWeather.Text);
+            if (codeBd != null)
+            {
+                MessageBox.Show("This code already exists.");
+                return;
+            }
+
+            appWeather.CreateWeather(code, textDescriptionWeather.Text);
 
             textIdWeather.Text = "";
-            textCodeWeather.Text = "";
+            cBoxCodeWeather.SelectedIndex = -1;
             textDescriptionWeather.Text = "";
             MessageBox.Show("Successful registration!");
         }
         private void btnClearWeather_Click(object sender, EventArgs e)
         {
             textIdWeather.Text = "";
-            textCodeWeather.Text = "";
+            cBoxCodeWeather.SelectedIndex = -1;
             textDescriptionWeather.Text = "";
         }
         private void btnUpdateWeather_Click(object sender, EventArgs e)
@@ -411,7 +491,7 @@ namespace Presentation
                 MessageBox.Show("Id empty!");
                 return;
             }
-            if (textCodeWeather.Text == "")
+            if (cBoxCodeWeather.Text == "")
             {
                 MessageBox.Show("Code empty!");
                 return;
@@ -422,10 +502,25 @@ namespace Presentation
                 return;
             }
             int Id = Convert.ToInt32(textIdWeather.Text);
-            appWeather.UpdateWeather(Id, textCodeWeather.Text, textDescriptionWeather.Text);
+            Enum.TryParse(cBoxCodeWeather.Text, out Code code);
+
+            // Validacion mismo code
+            var weather = appWeather.GetWeather(Id);
+            if (weather.Code.ToString() != cBoxCodeWeather.Text)
+            {
+                // Validación Code unico
+                var codeBd = appWeather.GetWeather(cBoxCodeWeather.Text);
+                if (codeBd != null)
+                {
+                    MessageBox.Show("This code already exists.");
+                    return;
+                }
+            }
+
+            appWeather.UpdateWeather(Id, code, textDescriptionWeather.Text);
 
             textIdWeather.Text = "";
-            textCodeWeather.Text = "";
+            cBoxCodeWeather.SelectedIndex = -1;
             textDescriptionWeather.Text = "";
             MessageBox.Show("Successful update!");
         }
@@ -436,12 +531,23 @@ namespace Presentation
                 MessageBox.Show("Id empty!");
                 return;
             }
+
             int Id = Convert.ToInt32(textIdWeather.Text);
+
+            // Validacion Playlists con Clima registrado
+            var allPlaylists = appPlaylist.ReadPlaylist();
+            bool tiene = allPlaylists.Any(x => x.Weather.Id == Id);
+
+            if (tiene)
+            {
+                MessageBox.Show("This weather has registered playlist.");
+                return;
+            }
 
             appWeather.DeleteWeather(Id);
 
             textIdWeather.Text = "";
-            textCodeWeather.Text = "";
+            cBoxCodeWeather.SelectedIndex = -1;
             textDescriptionWeather.Text = "";
             MessageBox.Show("Successful deleted!");
         }
@@ -458,13 +564,17 @@ namespace Presentation
 
             foreach (var playlist in listPlaylist)
             {
-                dataGridPlaylist.Rows.Add(playlist.Id.ToString(), playlist.Name.ToString(), playlist.Weather.Code.ToString());
+                dataGridPlaylist.Rows.Add(playlist.Id.ToString(), playlist.Name.ToString(), playlist.Weather.Code.ToString(), playlist.TotalDuration.ToString());
             }
         }
         private void dataGridPlaylist_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            var indexRow = e.RowIndex;
+            var indexRow = e.RowIndex;     
+            if (indexRow == -1)
+                return;
             DataGridViewRow row = dataGridPlaylist.Rows[indexRow];
+            if (row.Cells[0].Value is null)
+                return;
             textIdPlaylist.Text = row.Cells[0].Value.ToString();
             textNamePlaylist.Text = row.Cells[1].Value.ToString();
             cBoxWeatherPlaylist.Text = row.Cells[2].Value.ToString();
@@ -545,6 +655,7 @@ namespace Presentation
             listBoxSongPlaylist.Items.CopyTo(itemsArray, 0);
 
             var listSong = new List<Song>();
+            var durationPlaylist = "00:00";
 
             for (int i = 0; i < listBoxSongPlaylist.Items.Count; i++)
             {
@@ -557,13 +668,17 @@ namespace Presentation
                 var songsname = listAllSong.Where(x => x.Name == songName).ToList();
                 var song = songsname.Where(x => x.Author.Name == songAuthor).FirstOrDefault();
 
+                durationPlaylist = DurationSuma(durationPlaylist, song.TotalDuration);
+
                 listSong.Add(song);                
             }
 
-            var listWeather = appWeather.ReadWeather();
-            var weather = listWeather.Where(x => x.Code == cBoxWeatherPlaylist.Text).First();
+            Enum.TryParse(cBoxWeatherPlaylist.Text, out Code code);
 
-            appPlaylist.CreatePlaylist(textNamePlaylist.Text, weather, listSong);
+            var listWeather = appWeather.ReadWeather();
+            var weather = listWeather.Where(x => x.Code == code).First();
+
+            appPlaylist.CreatePlaylist(textNamePlaylist.Text, weather, durationPlaylist, listSong);
 
             textIdPlaylist.Text = "";
             textNamePlaylist.Text = "";
@@ -581,7 +696,17 @@ namespace Presentation
 
             int id = Convert.ToInt32(textIdPlaylist.Text);
 
+            var plSelect = appPlaylist.GetPlaylist(id); 
+
+            if (plSelect.Name == uiAlbum.playlistPlaying)
+            {
+                MessageBox.Show("This playlist is playing.");
+                return;
+            }
+
             appPlaylist.DeletePlaylist(id);
+
+            uiAlbum.SetAllPlaylist();
 
             textIdPlaylist.Text = "";
             textNamePlaylist.Text = "";
@@ -596,6 +721,17 @@ namespace Presentation
                 MessageBox.Show("Id empty!");
                 return;
             }
+
+            int id = Convert.ToInt32(textIdPlaylist.Text);
+
+            var plSelect = appPlaylist.GetPlaylist(id);
+
+            if (plSelect.Name == uiAlbum.playlistPlaying)
+            {
+                MessageBox.Show("This playlist is playing.");
+                return;
+            }
+
             if (textNamePlaylist.Text == "")
             {
                 MessageBox.Show("Name empty!");
@@ -612,15 +748,16 @@ namespace Presentation
                 return;
             }
 
-            int id = Convert.ToInt32(textIdPlaylist.Text);
+            Enum.TryParse(cBoxWeatherPlaylist.Text, out Code code);
 
             var listWeather = appWeather.ReadWeather();
-            var weather = listWeather.Where(x => x.Code == cBoxWeatherPlaylist.Text).First();
+            var weather = listWeather.Where(x => x.Code == code).First();
 
             string[] itemsArray = new string[listBoxSongPlaylist.Items.Count];
             listBoxSongPlaylist.Items.CopyTo(itemsArray, 0);
 
             var listSong = new List<Song>();
+            var durationPlaylist = "00:00";
 
             for (int i = 0; i < listBoxSongPlaylist.Items.Count; i++)
             {
@@ -633,10 +770,14 @@ namespace Presentation
                 var songsname = listAllSong.Where(x => x.Name == songName).ToList();
                 var song = songsname.Where(x => x.Author.Name == songAuthor).FirstOrDefault();
 
+                durationPlaylist = DurationSuma(durationPlaylist, song.TotalDuration);
+
                 listSong.Add(song);
             }
 
-            appPlaylist.UpdatePlaylist(id, textNamePlaylist.Text, weather, listSong);
+            appPlaylist.UpdatePlaylist(id, textNamePlaylist.Text, weather, durationPlaylist, listSong);
+
+            uiAlbum.SetAllPlaylist();
 
             textIdPlaylist.Text = "";
             textNamePlaylist.Text = "";
@@ -663,7 +804,11 @@ namespace Presentation
         private void dataGridUser_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             var indexRow = e.RowIndex;
+            if (indexRow == -1)
+                return;
             DataGridViewRow row = dataGridUser.Rows[indexRow];
+            if (row.Cells[0].Value is null)
+                return;
             textIdUser.Text = row.Cells[0].Value.ToString();
             textNameUser.Text = row.Cells[1].Value.ToString();
             cBoxTypeUser.Text = row.Cells[2].Value.ToString();
@@ -718,6 +863,20 @@ namespace Presentation
         }
         private void btnUpdateUser_Click(object sender, EventArgs e)
         {
+            if (textIdUser.Text == "4" || textIdUser.Text == "6")
+            {
+                MessageBox.Show("Default user.\nCannot be edited.");
+                return;
+            }
+
+            int id = Convert.ToInt32(textIdUser.Text);
+
+            if (id == uiAlbum.userUsing)
+            {
+                MessageBox.Show("This user is being used.");
+                return;
+            }
+
             if (textIdUser.Text == "")
             {
                 MessageBox.Show("Id empty!");
@@ -738,8 +897,7 @@ namespace Presentation
                 MessageBox.Show("Password empty!");
                 return;
             }
-
-            int id = Convert.ToInt32(textIdUser.Text);
+            
             Enum.TryParse(cBoxTypeUser.Text, out UserType userType);
 
             appUser.UpdateUser(id, textNameUser.Text, userType, textPasswordUser.Text);
@@ -752,13 +910,31 @@ namespace Presentation
         }
         private void btnDeleteUser_Click(object sender, EventArgs e)
         {
+            if (textIdUser.Text == "4" || textIdUser.Text == "6")
+            {
+                MessageBox.Show("Default user.\nCannot be deleted.");
+                return;
+            }
+
+            int id = Convert.ToInt32(textIdUser.Text);
+
+            if (id == uiAlbum.userUsing)
+            {
+                MessageBox.Show("This user is being used.");
+                return;
+            }
+
             if (textIdUser.Text == "")
             {
                 MessageBox.Show("Id empty!");
                 return;
             }
 
-            int id = Convert.ToInt32(textIdUser.Text);
+            if (textIdUser.Text == "")
+            {
+                MessageBox.Show("Id empty!");
+                return;
+            }
 
             appUser.DeleteUser(id);
 
@@ -795,6 +971,12 @@ namespace Presentation
                     }
                     break;
                 case 2:
+                    cBoxCodeWeather.Items.Clear();
+                    var codeList = Enum.GetNames(typeof(Code));
+                    foreach (var code in codeList)
+                    {
+                        cBoxCodeWeather.Items.Add(code);
+                    }
                     LoadWeathers();
                     break;
                 case 3: 
@@ -830,6 +1012,26 @@ namespace Presentation
             this.Hide();
         }
 
-        
+        private string DurationSuma(string one, string two)
+        {
+            // Convertir las cadenas a TimeSpan, considerando que el formato es m:ss o mm:ss
+            TimeSpan ts1 = ParseTimeSpan(one);
+            TimeSpan ts2 = ParseTimeSpan(two);
+
+            // Sumar los TimeSpan
+            TimeSpan result = ts1 + ts2;
+
+            // Convertir el resultado a cadena en formato m:ss
+            string resultString = $"{(int)result.TotalMinutes}:{result.Seconds:D2}";
+
+            return resultString;
+        }
+        private TimeSpan ParseTimeSpan(string time)
+        {
+            string[] parts = time.Split(':');
+            int minutes = int.Parse(parts[0]);
+            int seconds = int.Parse(parts[1]);
+            return new TimeSpan(0, minutes, seconds);
+        }
     }
 }

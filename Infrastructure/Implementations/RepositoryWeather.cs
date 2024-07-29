@@ -1,28 +1,37 @@
 ﻿using CrossCutting;
+using CrossCutting.Enums;
 using Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Infrastructure.Implementations
 {
     public class RepositoryWeather : IRepositoryWeather
     {
-        ConnectionDB connection = new ConnectionDB();
+        private readonly SqlConnection connection;
 
-        public void CreateWeather(string code, string description)
+        public RepositoryWeather()
+        {
+            connection = ConnectionDB.GetInstance().GetConnection();
+        }
+
+        public void CreateWeather(Code code, string description)
         {
             string query = "INSERT INTO Climas (Codigo, Descripcion) VALUES (@codigo, @descripcion)";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            string codeStr = code.ToString();
+
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@codigo", code);
+                command.Parameters.AddWithValue("@codigo", codeStr);
                 command.Parameters.AddWithValue("@descripcion", description);
 
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
         public List<Weather> ReadWeather()
         {
@@ -30,7 +39,8 @@ namespace Infrastructure.Implementations
 
             var query = "SELECT * FROM Climas";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -39,40 +49,103 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        listWeather.Add(new Weather(Convert.ToInt32(fila["Id"]), fila["Codigo"].ToString(), fila["Descripcion"].ToString()));
+                        string auxCode = fila["Codigo"].ToString();
+                        Enum.TryParse(auxCode, out Code codeRes);
+
+                        listWeather.Add(new Weather(Convert.ToInt32(fila["Id"]), codeRes, fila["Descripcion"].ToString()));
                     }
-                    return listWeather;
                 }
             }
+            connection.Close();
+
+            return listWeather;
         }
-        public void UpdateWeather(int id, string code, string description)
+        public void UpdateWeather(int id, Code code, string description)
         {
             string query = "UPDATE Climas SET Codigo = @codigo, Descripcion = @descripcion WHERE Id = @id";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            string codeStr = code.ToString();
+
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@codigo", code);
+                command.Parameters.AddWithValue("@codigo", codeStr);
                 command.Parameters.AddWithValue("@descripcion", description);
 
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
         public void DeleteWeather(int id)
         {
             string query = "DELETE FROM Climas WHERE Id = @id";
 
-            using (SqlCommand command = new SqlCommand(query, connection.GetConnection()))
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", id);
 
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
+
         public Weather GetWeather(int id)
         {
-            var allWeather = ReadWeather();
-            var weather = allWeather.Where(x => x.Id == id).First();
+            Weather weather = null;
+            string query = "SELECT * FROM Climas WHERE Id=@id";
+
+            string idStr = id.ToString();
+
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", idStr);
+
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    foreach (DataRow fila in dt.Rows)
+                    {
+                        string auxCode = fila["Codigo"].ToString();
+                        Enum.TryParse(auxCode, out Code codeRes);
+
+                        weather = new Weather(Convert.ToInt32(fila["Id"]), codeRes,fila["Descripcion"].ToString());
+                    }
+                }
+            }
+            connection.Close();
+
+            return weather;
+        }
+        public Weather GetWeather(string code)
+        {
+            Weather weather = null;
+            string query = "SELECT * FROM Climas WHERE Codigo=@codigo";
+
+            connection.Open();
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@codigo", code);
+
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    foreach (DataRow fila in dt.Rows)
+                    {
+                        string auxCode = fila["Codigo"].ToString();
+                        Enum.TryParse(auxCode, out Code codeRes);
+
+                        weather = new Weather(Convert.ToInt32(fila["Id"]), codeRes, fila["Descripcion"].ToString());
+                    }
+                }
+            }
+            connection.Close();
 
             return weather;
         }

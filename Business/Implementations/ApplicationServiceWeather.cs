@@ -1,11 +1,17 @@
 ﻿using Business.Interfaces;
 using Service.Implementations;
+using Service.Interfaces;
 
 namespace Business.Implementations
 {
     public class ApplicationServiceWeather : IApplicationServiceWeather
     {
-        ServiceWeather serWeather = new ServiceWeather();
+        private readonly IServiceWeather serWeather;
+
+        public ApplicationServiceWeather()
+        {
+            serWeather = new ServiceWeather();
+        }
 
         public string GetTemp()
         {

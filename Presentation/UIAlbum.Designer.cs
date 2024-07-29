@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox8 = new System.Windows.Forms.PictureBox();
             this.listBoxAllPlaylist = new System.Windows.Forms.ListBox();
             this.pictureBoxAdmin = new System.Windows.Forms.PictureBox();
             this.pictureBox7 = new System.Windows.Forms.PictureBox();
@@ -44,13 +45,15 @@
             this.labelSongNow = new System.Windows.Forms.Label();
             this.labelCurrent = new System.Windows.Forms.Label();
             this.labelTotal = new System.Windows.Forms.Label();
+            this.labelAuthorNow = new System.Windows.Forms.Label();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.labelAuthorNow = new System.Windows.Forms.Label();
+            this.labelLibrary = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAdmin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
@@ -66,6 +69,8 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+            this.panel1.Controls.Add(this.labelLibrary);
+            this.panel1.Controls.Add(this.pictureBox8);
             this.panel1.Controls.Add(this.listBoxAllPlaylist);
             this.panel1.Controls.Add(this.pictureBoxAdmin);
             this.panel1.Controls.Add(this.pictureBox7);
@@ -77,6 +82,17 @@
             this.panel1.TabIndex = 0;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
+            // pictureBox8
+            // 
+            this.pictureBox8.Image = global::Presentation.Properties.Resources._4028830;
+            this.pictureBox8.Location = new System.Drawing.Point(25, 74);
+            this.pictureBox8.Name = "pictureBox8";
+            this.pictureBox8.Size = new System.Drawing.Size(40, 40);
+            this.pictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox8.TabIndex = 5;
+            this.pictureBox8.TabStop = false;
+            this.pictureBox8.Click += new System.EventHandler(this.pictureBox8_Click);
+            // 
             // listBoxAllPlaylist
             // 
             this.listBoxAllPlaylist.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
@@ -87,14 +103,14 @@
             this.listBoxAllPlaylist.ItemHeight = 22;
             this.listBoxAllPlaylist.Location = new System.Drawing.Point(25, 120);
             this.listBoxAllPlaylist.Name = "listBoxAllPlaylist";
-            this.listBoxAllPlaylist.Size = new System.Drawing.Size(275, 374);
+            this.listBoxAllPlaylist.Size = new System.Drawing.Size(275, 352);
             this.listBoxAllPlaylist.TabIndex = 4;
             this.listBoxAllPlaylist.SelectedIndexChanged += new System.EventHandler(this.listBoxAllPlaylist_SelectedIndexChanged);
             // 
             // pictureBoxAdmin
             // 
             this.pictureBoxAdmin.Image = global::Presentation.Properties.Resources.carpeta;
-            this.pictureBoxAdmin.Location = new System.Drawing.Point(200, 10);
+            this.pictureBoxAdmin.Location = new System.Drawing.Point(270, 485);
             this.pictureBoxAdmin.Name = "pictureBoxAdmin";
             this.pictureBoxAdmin.Size = new System.Drawing.Size(40, 40);
             this.pictureBoxAdmin.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -238,6 +254,16 @@
             this.labelTotal.TabIndex = 10;
             this.labelTotal.Text = "00:00";
             // 
+            // labelAuthorNow
+            // 
+            this.labelAuthorNow.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelAuthorNow.Location = new System.Drawing.Point(357, 365);
+            this.labelAuthorNow.Name = "labelAuthorNow";
+            this.labelAuthorNow.Size = new System.Drawing.Size(380, 24);
+            this.labelAuthorNow.TabIndex = 11;
+            this.labelAuthorNow.Text = "namesauthor";
+            this.labelAuthorNow.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // pictureBox5
             // 
             this.pictureBox5.Image = global::Presentation.Properties.Resources.cancion;
@@ -292,15 +318,15 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // labelAuthorNow
+            // labelLibrary
             // 
-            this.labelAuthorNow.Font = new System.Drawing.Font("Arial Rounded MT Bold", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelAuthorNow.Location = new System.Drawing.Point(357, 365);
-            this.labelAuthorNow.Name = "labelAuthorNow";
-            this.labelAuthorNow.Size = new System.Drawing.Size(380, 24);
-            this.labelAuthorNow.TabIndex = 11;
-            this.labelAuthorNow.Text = "namesauthor";
-            this.labelAuthorNow.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.labelLibrary.Font = new System.Drawing.Font("Arial Rounded MT Bold", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLibrary.Location = new System.Drawing.Point(167, 493);
+            this.labelLibrary.Name = "labelLibrary";
+            this.labelLibrary.Size = new System.Drawing.Size(97, 25);
+            this.labelLibrary.TabIndex = 9;
+            this.labelLibrary.Text = "Library";
+            this.labelLibrary.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // UIAlbum
             // 
@@ -321,9 +347,9 @@
             this.Controls.Add(this.panel2);
             this.Name = "UIAlbum";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.UIAlbum_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAdmin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
@@ -364,6 +390,8 @@
         private System.Windows.Forms.PictureBox pictureBoxAdmin;
         private System.Windows.Forms.ListBox listBoxAllPlaylist;
         private System.Windows.Forms.Label labelAuthorNow;
+        private System.Windows.Forms.PictureBox pictureBox8;
+        private System.Windows.Forms.Label labelLibrary;
     }
 }
 
