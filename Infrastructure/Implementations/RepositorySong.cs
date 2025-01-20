@@ -10,35 +10,31 @@ namespace Infrastructure.Implementations
 {
     public class RepositorySong : IRepositorySong
     {
-        private readonly SqlConnection connection;
-        private readonly RepositoryAuthor repAuthor;
+        private readonly SqlConnection _connection;
+        private readonly RepositoryAuthor _repAuthor;
 
         public RepositorySong()
         {
-            connection = ConnectionDB.GetInstance().GetConnection();
-
-            repAuthor = new RepositoryAuthor();
+            _connection = ConnectionDB.GetInstance().GetConnection();
+            _repAuthor = new RepositoryAuthor();
         }
 
         public void CreateSong(string name, Category category, Author author, string album, string totalDuration)
         {
             string query = "INSERT INTO Canciones (Nombre, Categoria, Autor, Album, DuracionTotal) VALUES (@nombre, @categoria, @autor, @album, @duracionTotal)";
 
-            string categoryStr = category.ToString();
-            int authorInt = author.Id;
-
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@nombre", name);
-                command.Parameters.AddWithValue("@categoria", categoryStr);
-                command.Parameters.AddWithValue("@autor", authorInt);
+                command.Parameters.AddWithValue("@categoria", category.ToString());
+                command.Parameters.AddWithValue("@autor", author.Id);
                 command.Parameters.AddWithValue("@album", album);
                 command.Parameters.AddWithValue("@duracionTotal", totalDuration);
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
         public List<Song> ReadSong()
         {
@@ -46,9 +42,8 @@ namespace Infrastructure.Implementations
 
             var query = "SELECT * FROM Canciones";
 
-            if (connection.State == 0)
-                connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -56,18 +51,15 @@ namespace Infrastructure.Implementations
                     adapter.Fill(dt);                    
 
                     foreach (DataRow fila in dt.Rows)
-                    {
-                        string auxCategory = fila["Categoria"].ToString();                                                
-                        Enum.TryParse(auxCategory, out Category categoryRes);
+                    {                                             
+                        Enum.TryParse(fila["Categoria"].ToString(), out Category categoryEnum);
+                        var authorEntity = _repAuthor.GetAuthor(Convert.ToInt32(fila["Autor"]));
 
-                        int idAuthor = Convert.ToInt32(fila["Autor"]);
-                        var author = repAuthor.GetAuthor(idAuthor);
-
-                        listSongs.Add(new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryRes, author, fila["Album"].ToString(), fila["DuracionTotal"].ToString()));
+                        listSongs.Add(new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryEnum, authorEntity, fila["Album"].ToString(), fila["DuracionTotal"].ToString()));
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return listSongs;
         }
@@ -75,35 +67,33 @@ namespace Infrastructure.Implementations
         {
             string query = "UPDATE Canciones SET Nombre = @nombre, Categoria = @categoria, Autor = @autor, Album = @album, DuracionTotal = @duracionTotal WHERE Id = @id";
 
-            string categoryStr = category.ToString();
             int authorInt = author.Id;
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {                
                 command.Parameters.AddWithValue("@id", id);
                 command.Parameters.AddWithValue("@nombre", name);
-                command.Parameters.AddWithValue("@categoria", categoryStr);
+                command.Parameters.AddWithValue("@categoria", category.ToString());
                 command.Parameters.AddWithValue("@autor", authorInt);
                 command.Parameters.AddWithValue("@album", album);
                 command.Parameters.AddWithValue("@duracionTotal", totalDuration);
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
         public void DeleteSong(int id)
         {
             string query = "DELETE FROM Canciones WHERE Id = @id";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
-
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
 
         public Song GetSong(int id)
@@ -112,13 +102,11 @@ namespace Infrastructure.Implementations
 
             string query = "SELECT * FROM Canciones WHERE Id=@id";
 
-            string idStr = id.ToString();
-
-            if (connection.State == 0)
-                connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            if (_connection.State == ConnectionState.Closed)
+                _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
-                command.Parameters.AddWithValue("@id", idStr);
+                command.Parameters.AddWithValue("@id", id);
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -127,32 +115,27 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxCategory = fila["Categoria"].ToString();
-                        Enum.TryParse(auxCategory, out Category categoryRes);
+                        Enum.TryParse(fila["Categoria"].ToString(), out Category categoryEnum);
+                        var authorEntity = _repAuthor.GetAuthor(Convert.ToInt32(fila["Autor"]));
 
-                        int idAuthor = Convert.ToInt32(fila["Autor"]);
-                        var author = repAuthor.GetAuthor(idAuthor);
-
-                        song = new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryRes, author, fila["Album"].ToString(), fila["DuracionTotal"].ToString());
+                        song = new Song(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), categoryEnum, authorEntity, fila["Album"].ToString(), fila["DuracionTotal"].ToString());
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return song;
         }
-        public List<Song> GetListSongs(int id)
+        public List<Song> GetSongsPlayList(int id)
         {
             var listSongs = new List<Song>();
 
             var query = "SELECT * FROM PlaylistCanciones WHERE idPlaylist=@id";
 
-            string idStr = id.ToString();
-
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
-                command.Parameters.AddWithValue("@id", idStr);
+                command.Parameters.AddWithValue("@id", id);
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
                     var dt = new DataTable();
@@ -160,15 +143,13 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        int aux = Convert.ToInt32(fila["IdCancion"]);
-
-                        var auxSong = GetSong(aux);
+                        var auxSong = GetSong(Convert.ToInt32(fila["IdCancion"]));
 
                         listSongs.Add(auxSong);
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return listSongs;
         }

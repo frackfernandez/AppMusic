@@ -43,7 +43,7 @@ namespace Business.Implementations
 
         public List<Song> GetListSongs(int id) 
         {
-            var list = repSong.GetListSongs(id);
+            var list = repSong.GetSongsPlayList(id);
             return list;
         }
     }

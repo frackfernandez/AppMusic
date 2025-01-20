@@ -10,29 +10,27 @@ namespace Infrastructure.Implementations
 {
     public class RepositoryUser : IRepositoryUser
     {
-        private readonly SqlConnection connection;
+        private readonly SqlConnection _connection;
 
         public RepositoryUser()
         {
-            connection = ConnectionDB.GetInstance().GetConnection();
+            _connection = ConnectionDB.GetInstance().GetConnection();
         }
 
         public void CreateUser(string name, UserType type, string password)
         {
             string query = "INSERT INTO Usuarios (Nombre, Tipo, Contraseña) VALUES (@nombre,@tipo,@contraseña)";
 
-            string typeStr = type.ToString();
-
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@nombre", name);
-                command.Parameters.AddWithValue("@tipo", typeStr);
+                command.Parameters.AddWithValue("@tipo", type.ToString());
                 command.Parameters.AddWithValue("@contraseña", password);
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
         public List<User> ReadUser()
         {
@@ -40,8 +38,8 @@ namespace Infrastructure.Implementations
 
             var query = "SELECT * FROM Usuarios";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -50,45 +48,43 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxType = fila["Tipo"].ToString();
-                        Enum.TryParse(auxType, out UserType typeRes);
+                        Enum.TryParse(fila["Tipo"].ToString(), out UserType typeRes);
 
                         listUser.Add(new User(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), typeRes, fila["Contraseña"].ToString()));
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
             return listUser;
         }
         public void UpdateUser(int id, string name, UserType type, string password)
         {
             string query = "UPDATE Usuarios SET Nombre = @nombre, Tipo = @tipo, Contraseña = @contraseña WHERE Id = @id";
-            string typeStr = type.ToString();
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
                 command.Parameters.AddWithValue("@nombre", name);
-                command.Parameters.AddWithValue("@tipo", typeStr);
+                command.Parameters.AddWithValue("@tipo", type.ToString());
                 command.Parameters.AddWithValue("@contraseña", password);
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
         public void DeleteUser(int id)
         {
             string query = "DELETE FROM Usuarios WHERE Id = @id";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }      
         
         public User GetUser(int id)
@@ -98,8 +94,8 @@ namespace Infrastructure.Implementations
 
             string idStr = id.ToString();
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", idStr);
 
@@ -110,14 +106,13 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxType = fila["Tipo"].ToString();
-                        Enum.TryParse(auxType, out UserType typeRes);
+                        Enum.TryParse(fila["Tipo"].ToString(), out UserType typeEnum);
 
-                        user = new User(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), typeRes, fila["Contraseña"].ToString());
+                        user = new User(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), typeEnum, fila["Contraseña"].ToString());
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return user;
         }
@@ -126,8 +121,8 @@ namespace Infrastructure.Implementations
             User user = null;
             string query = "SELECT * FROM Usuarios WHERE Nombre=@name AND Contraseña=@password";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@name", name);
                 command.Parameters.AddWithValue("@password", password);
@@ -139,14 +134,13 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxType = fila["Tipo"].ToString();
-                        Enum.TryParse(auxType, out UserType typeRes);
+                        Enum.TryParse(fila["Tipo"].ToString(), out UserType typeEnum);
 
-                        user = new User(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), typeRes, fila["Contraseña"].ToString());
+                        user = new User(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), typeEnum, fila["Contraseña"].ToString());
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return user;
         }

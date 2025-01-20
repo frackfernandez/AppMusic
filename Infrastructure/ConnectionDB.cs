@@ -10,8 +10,7 @@ namespace Infrastructure
         private ConnectionDB() { }
 
         public SqlConnection GetConnection()
-        {
-            
+        {            
             string connectionString = "Data Source=.;Database=MusicPlayer;Integrated Security=True;TrustServerCertificate=True";
             
             return new SqlConnection(connectionString);

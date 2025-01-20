@@ -21,12 +21,10 @@ namespace Infrastructure.Implementations
         {
             string query = "INSERT INTO Climas (Codigo, Descripcion) VALUES (@codigo, @descripcion)";
 
-            string codeStr = code.ToString();
-
             connection.Open();
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@codigo", codeStr);
+                command.Parameters.AddWithValue("@codigo", code.ToString());
                 command.Parameters.AddWithValue("@descripcion", description);
 
                 command.ExecuteNonQuery();
@@ -49,10 +47,9 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxCode = fila["Codigo"].ToString();
-                        Enum.TryParse(auxCode, out Code codeRes);
+                        Enum.TryParse(fila["Codigo"].ToString(), out Code codeEnum);
 
-                        listWeather.Add(new Weather(Convert.ToInt32(fila["Id"]), codeRes, fila["Descripcion"].ToString()));
+                        listWeather.Add(new Weather(Convert.ToInt32(fila["Id"]), codeEnum, fila["Descripcion"].ToString()));
                     }
                 }
             }
@@ -64,13 +61,11 @@ namespace Infrastructure.Implementations
         {
             string query = "UPDATE Climas SET Codigo = @codigo, Descripcion = @descripcion WHERE Id = @id";
 
-            string codeStr = code.ToString();
-
             connection.Open();
             using (SqlCommand command = new SqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@codigo", codeStr);
+                command.Parameters.AddWithValue("@codigo", code.ToString());
                 command.Parameters.AddWithValue("@descripcion", description);
 
                 command.ExecuteNonQuery();
@@ -96,12 +91,10 @@ namespace Infrastructure.Implementations
             Weather weather = null;
             string query = "SELECT * FROM Climas WHERE Id=@id";
 
-            string idStr = id.ToString();
-
             connection.Open();
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@id", idStr);
+                command.Parameters.AddWithValue("@id", id);
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -110,10 +103,9 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxCode = fila["Codigo"].ToString();
-                        Enum.TryParse(auxCode, out Code codeRes);
+                        Enum.TryParse(fila["Codigo"].ToString(), out Code codeEnum);
 
-                        weather = new Weather(Convert.ToInt32(fila["Id"]), codeRes,fila["Descripcion"].ToString());
+                        weather = new Weather(Convert.ToInt32(fila["Id"]), codeEnum, fila["Descripcion"].ToString());
                     }
                 }
             }
@@ -138,10 +130,9 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        string auxCode = fila["Codigo"].ToString();
-                        Enum.TryParse(auxCode, out Code codeRes);
+                        Enum.TryParse(fila["Codigo"].ToString(), out Code codeEnum);
 
-                        weather = new Weather(Convert.ToInt32(fila["Id"]), codeRes, fila["Descripcion"].ToString());
+                        weather = new Weather(Convert.ToInt32(fila["Id"]), codeEnum, fila["Descripcion"].ToString());
                     }
                 }
             }

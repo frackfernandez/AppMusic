@@ -113,33 +113,66 @@ namespace Presentation
         {
             string tem = ASWeather.GetTemp();
             string wea = ASWeather.GetWeather();
-            label1.Text = wea.ToUpper();
+            label1.Text = wea;
             label2.Text = $"{tem}°C";
-
-            if (wea.ToLower() == "clouds")
+            
+            var hora = DateTime.Now.Hour - 1; // 0 a 23
+            if (hora > 18 || hora < 6) // noche o madrugada
             {
-                pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                switch (wea.ToLower())
+                {
+                    case "clouds":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                        break;
+                    case "rain":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.gotas_de_lluvia;
+                        break;
+                    case "wind":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.viento;
+                        break;
+                    case "snow":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nevando;
+                        break;
+                    case "clear":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.sol;
+                        break;
+                    case "haze":
+                    case "mist":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                        break;
+                    default:
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                        break;
+                }
             }
-            else if (wea.ToLower() == "rain")
+            else // dia
             {
-                pictureBoxWeather.Image = Presentation.Properties.Resources.gotas_de_lluvia;
-            }
-            else if (wea.ToLower() == "wind")
-            {
-                pictureBoxWeather.Image = Presentation.Properties.Resources.viento;
-            }
-            else if (wea.ToLower() == "snow")
-            {
-                pictureBoxWeather.Image = Presentation.Properties.Resources.nevando;
-            }
-            else if (wea.ToLower() == "clear")
-            {
-                pictureBoxWeather.Image = Presentation.Properties.Resources.sol;
-            }
-            else if (wea.ToLower() == "haze" || wea.ToLower() == "mist")
-            {
-                pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
-            }
+                switch (wea.ToLower())
+                {
+                    case "clouds":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                        break;
+                    case "rain":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.gotas_de_lluvia;
+                        break;
+                    case "wind":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.viento;
+                        break;
+                    case "snow":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nevando;
+                        break;
+                    case "clear":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.sol;
+                        break;
+                    case "haze":
+                    case "mist":
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                        break;
+                    default:
+                        pictureBoxWeather.Image = Presentation.Properties.Resources.nubes;
+                        break;
+                }
+            }            
         }
         public void SetAllPlaylist()
         {

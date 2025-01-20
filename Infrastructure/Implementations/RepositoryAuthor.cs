@@ -9,25 +9,24 @@ namespace Infrastructure.Implementations
 {
     public class RepositoryAuthor : IRepositoryAuthor
     {
-        private readonly SqlConnection connection;
+        private readonly SqlConnection _connection;
 
         public RepositoryAuthor()
         {
-            connection = ConnectionDB.GetInstance().GetConnection();
+            _connection = ConnectionDB.GetInstance().GetConnection();
         }
 
         public void CreateAuthor(string name)
         {
             string query = "INSERT INTO Autores (Nombre) VALUES (@nombre)";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {                
-                command.Parameters.AddWithValue("@nombre", name);
-                
+                command.Parameters.AddWithValue("@nombre", name);                
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
         public List<Author> ReadAuthor()
         {
@@ -35,8 +34,8 @@ namespace Infrastructure.Implementations
 
             var query = "SELECT * FROM Autores";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {                
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -49,35 +48,34 @@ namespace Infrastructure.Implementations
                     }
                 }                
             }
-            connection.Close();
+            _connection.Close();
             return listAuthors;
         }        
         public void UpdateAuthor(int id, string name)
         {
             string query = "UPDATE Autores SET Nombre = @nombre WHERE Id = @id";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
                 command.Parameters.AddWithValue("@nombre", name);
 
                 command.ExecuteNonQuery();                
             }
-            connection.Close();
+            _connection.Close();
         }
         public void DeleteAuthor(int id)
         {
             string query = "DELETE FROM Autores WHERE Id = @id";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
-
                 command.ExecuteNonQuery();                
             }
-            connection.Close();
+            _connection.Close();
         }
 
         public Author GetAuthor(int id)
@@ -85,12 +83,10 @@ namespace Infrastructure.Implementations
             Author author = null;
             string query = "SELECT * FROM Autores WHERE Id=@id";
 
-            string idStr = id.ToString();
-
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
-                command.Parameters.AddWithValue("@id", idStr);
+                command.Parameters.AddWithValue("@id", id);
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -103,7 +99,7 @@ namespace Infrastructure.Implementations
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return author;
         }
@@ -112,8 +108,8 @@ namespace Infrastructure.Implementations
             Author author = null;
             string query = "SELECT * FROM Autores WHERE Nombre=@nombre";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@nombre", name);
 
@@ -128,7 +124,7 @@ namespace Infrastructure.Implementations
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return author;
         }

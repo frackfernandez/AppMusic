@@ -11,6 +11,6 @@ namespace Infrastructure.Interfaces
         void UpdateSong(int id, string name, Category category, Author author, string album, string totalDuration);
         void DeleteSong(int id);
         Song GetSong(int id);
-        List<Song> GetListSongs(int id);
+        List<Song> GetSongsPlayList(int id);
     }
 }

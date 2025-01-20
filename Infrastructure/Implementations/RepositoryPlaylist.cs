@@ -5,67 +5,61 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Infrastructure.Implementations
 {
     public class RepositoryPlaylist : IRepositoryPlaylist
     {        
-        private readonly SqlConnection connection;
-
-        private readonly RepositoryWeather repWeather;
-        private readonly RepositorySong repSong;
+        private readonly SqlConnection _connection;
+        private readonly RepositoryWeather _repWeather;
+        private readonly RepositorySong _repSong;
 
         public RepositoryPlaylist()
         {
-            connection = ConnectionDB.GetInstance().GetConnection();
-
-            repWeather = new RepositoryWeather();
-            repSong = new RepositorySong();
+            _connection = ConnectionDB.GetInstance().GetConnection();
+            _repWeather = new RepositoryWeather();
+            _repSong = new RepositorySong();
         }
 
         public void CreatePlaylist(string name, Weather weather, string totalDuration, List<Song> songs)
         {
-            string query = "INSERT INTO Playlist (Nombre, Clima, DuracionTotal) VALUES (@nombre, @clima, @duracionTotal); SELECT SCOPE_IDENTITY();";
-            int weatherInt = weather.Id;
-
             int id = 0;
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            string query = "INSERT INTO Playlist (Nombre, Clima, DuracionTotal) VALUES (@nombre, @clima, @duracionTotal); SELECT SCOPE_IDENTITY();";
+
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@nombre", name);
-                command.Parameters.AddWithValue("@clima", weatherInt);
+                command.Parameters.AddWithValue("@clima", weather.Id);
                 command.Parameters.AddWithValue("@duracionTotal", totalDuration);
 
                 object result = command.ExecuteScalar();
-                if (result != null && result != DBNull.Value)
-                {
-                    id = Convert.ToInt32(result);
-                }
+                id = Convert.ToInt32(result);
             }
 
             string querysongs = "INSERT INTO PlaylistCanciones (IdPlaylist, IdCancion) VALUES (@idPlaylist, @idCancion);";
 
-            for (int i = 0; i < songs.Count(); i++)
+            foreach (Song song in songs)
             {
-                using (SqlCommand command = new SqlCommand(querysongs, connection))
+                using (SqlCommand command = new SqlCommand(querysongs, _connection))
                 {
                     command.Parameters.AddWithValue("@idPlaylist", id);
-                    command.Parameters.AddWithValue("@idCancion", songs[i].Id);
-
+                    command.Parameters.AddWithValue("@idCancion", song.Id);
                     command.ExecuteNonQuery();
                 }
             }
-            connection.Close();
+            _connection.Close();
         }
-        public List<Playlist> ReadPlaylist()
+        public List<Playlist> ReadPlaylist() // mucho consumo
         {
             List<Playlist> listPlaylists = new List<Playlist>();
 
             var query = "SELECT * FROM Playlist";
 
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -74,28 +68,51 @@ namespace Infrastructure.Implementations
 
                     foreach (DataRow fila in dt.Rows)
                     {
-                        List<Song> listSongs = new List<Song>();
+                        List<Song> listSongsEntity = new List<Song>();
 
-                        int auxId = Convert.ToInt32(fila["Id"]);
-                        listSongs = repSong.GetListSongs(auxId);
+                        listSongsEntity = _repSong.GetSongsPlayList(Convert.ToInt32(fila["Id"]));
+                        var weatherEntity = _repWeather.GetWeather(Convert.ToInt32(fila["Clima"]));
 
-                        int auxIdWeather = Convert.ToInt32(fila["Clima"]);
-                        var weather = repWeather.GetWeather(auxIdWeather);
-
-                        listPlaylists.Add(new Playlist(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), weather, fila["DuracionTotal"].ToString(), listSongs));
+                        listPlaylists.Add(new Playlist(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(), weatherEntity, fila["DuracionTotal"].ToString(), listSongsEntity));
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return listPlaylists;
         }
+
+        public List<string> ReadNamePlaylists()
+        {
+            List<string> listPlaylists = new List<string>();
+
+            var query = "SELECT Nombre FROM Playlist";
+
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    foreach (DataRow fila in dt.Rows)
+                    {   
+                        listPlaylists.Add(fila["Nombre"].ToString());
+                    }
+                }
+            }
+            _connection.Close();
+
+            return listPlaylists;
+        }
+
         public void UpdatePlaylist(int id, string name, Weather weather, string totalDuration, List<Song> songs)
         {
-            connection.Open();
+            _connection.Open();
             string querypre = "DELETE FROM PlaylistCanciones WHERE idPlaylist = @idPlaylist";
 
-            using (SqlCommand command = new SqlCommand(querypre, connection))
+            using (SqlCommand command = new SqlCommand(querypre, _connection))
             {
                 command.Parameters.AddWithValue("@idPlaylist", id);
 
@@ -104,13 +121,12 @@ namespace Infrastructure.Implementations
 
             string querysongs = "INSERT INTO PlaylistCanciones (IdPlaylist, IdCancion) VALUES (@idPlaylist, @idCancion);";
 
-            for (int i = 0; i < songs.Count(); i++)
+            foreach (Song song in songs)
             {
-                int idSong = songs[i].Id;
-                using (SqlCommand command = new SqlCommand(querysongs, connection))
+                using (SqlCommand command = new SqlCommand(querysongs, _connection))
                 {
                     command.Parameters.AddWithValue("@idPlaylist", id);
-                    command.Parameters.AddWithValue("@idCancion", idSong);
+                    command.Parameters.AddWithValue("@idCancion", song.Id);
 
                     command.ExecuteNonQuery();
                 }
@@ -118,7 +134,7 @@ namespace Infrastructure.Implementations
 
             string query = "UPDATE Playlist SET Nombre = @nombre, Clima = @clima, DuracionTotal = @duracionTotal WHERE Id = @id";
 
-            using (SqlCommand command = new SqlCommand(query, connection))
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
                 command.Parameters.AddWithValue("@nombre", name);
@@ -127,14 +143,14 @@ namespace Infrastructure.Implementations
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }
         public void DeletePlaylist(int id)
         {
-            connection.Open();
+            _connection.Open();
             string query = "DELETE FROM PlaylistCanciones WHERE idPlaylist = @idPlaylist";
 
-            using (SqlCommand command = new SqlCommand(query, connection))
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
                 command.Parameters.AddWithValue("@idPlaylist", id);
 
@@ -143,13 +159,13 @@ namespace Infrastructure.Implementations
 
             string query2 = "DELETE FROM Playlist WHERE Id = @id";
 
-            using (SqlCommand command = new SqlCommand(query2, connection))
+            using (SqlCommand command = new SqlCommand(query2, _connection))
             {
                 command.Parameters.AddWithValue("@id", id);
 
                 command.ExecuteNonQuery();
             }
-            connection.Close();
+            _connection.Close();
         }                             
 
         public Playlist GetPlaylist(int id)
@@ -157,12 +173,10 @@ namespace Infrastructure.Implementations
             Playlist playlist = null;
             string query = "SELECT * FROM Playlist WHERE Id=@id";
 
-            string idStr = id.ToString();
-
-            connection.Open();
-            using (SqlCommand command = new SqlCommand(query, connection))
+            _connection.Open();
+            using (SqlCommand command = new SqlCommand(query, _connection))
             {
-                command.Parameters.AddWithValue("@id", idStr);
+                command.Parameters.AddWithValue("@id", id);
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -173,17 +187,14 @@ namespace Infrastructure.Implementations
                     {
                         List<Song> listSongs = new List<Song>();
 
-                        int auxId = Convert.ToInt32(fila["Id"]);
-                        listSongs = repSong.GetListSongs(auxId);
+                        listSongs = _repSong.GetSongsPlayList(Convert.ToInt32(fila["Id"]));
+                        var weatherEntity = _repWeather.GetWeather(Convert.ToInt32(fila["Clima"]));
 
-                        int auxIdWeather = Convert.ToInt32(fila["Clima"]);
-                        var weather = repWeather.GetWeather(auxIdWeather);
-
-                        playlist = new Playlist(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(),weather, fila["DuracionTotal"].ToString(), listSongs);
+                        playlist = new Playlist(Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(),weatherEntity, fila["DuracionTotal"].ToString(), listSongs);
                     }
                 }
             }
-            connection.Close();
+            _connection.Close();
 
             return playlist;
         }
