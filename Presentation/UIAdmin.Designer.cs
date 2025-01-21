@@ -43,6 +43,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.textAlbumSong = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
             this.textFileSong = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnUploadSong = new System.Windows.Forms.Button();
@@ -52,6 +54,12 @@
             this.btnRegisterSong = new System.Windows.Forms.Button();
             this.btnRefreshSong = new System.Windows.Forms.Button();
             this.dataGridSong = new System.Windows.Forms.DataGridView();
+            this.ColumnIdSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnNameSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnCategorySong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnAuthorSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnAlbumSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnTotalDurationSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textTotalDurationSong = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cBoxAuthorSong = new System.Windows.Forms.ComboBox();
@@ -89,6 +97,10 @@
             this.btnClearPlaylist = new System.Windows.Forms.Button();
             this.btnRefreshPlaylist = new System.Windows.Forms.Button();
             this.dataGridPlaylist = new System.Windows.Forms.DataGridView();
+            this.ColumnIdPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnNamePlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnWeatherPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnDurationPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label15 = new System.Windows.Forms.Label();
             this.listBoxSongPlaylist = new System.Windows.Forms.ListBox();
             this.cBoxWeatherPlaylist = new System.Windows.Forms.ComboBox();
@@ -117,18 +129,8 @@
             this.textIdUser = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.btnBack = new System.Windows.Forms.Button();
-            this.ColumnIdPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnNamePlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnWeatherPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnDurationPlaylist = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label21 = new System.Windows.Forms.Label();
-            this.textAlbumSong = new System.Windows.Forms.TextBox();
-            this.ColumnIdSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnNameSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnCategorySong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnAuthorSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnAlbumSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnTotalDurationSong = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.txtSearchSongs = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAuthor)).BeginInit();
@@ -291,6 +293,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button1);
+            this.tabPage2.Controls.Add(this.txtSearchSongs);
             this.tabPage2.Controls.Add(this.textAlbumSong);
             this.tabPage2.Controls.Add(this.label21);
             this.tabPage2.Controls.Add(this.textFileSong);
@@ -319,6 +323,22 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Songs";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // textAlbumSong
+            // 
+            this.textAlbumSong.Location = new System.Drawing.Point(10, 240);
+            this.textAlbumSong.Name = "textAlbumSong";
+            this.textAlbumSong.Size = new System.Drawing.Size(300, 23);
+            this.textAlbumSong.TabIndex = 21;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(10, 220);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(52, 15);
+            this.label21.TabIndex = 20;
+            this.label21.Text = "Album:";
             // 
             // textFileSong
             // 
@@ -413,6 +433,47 @@
             this.dataGridSong.Size = new System.Drawing.Size(675, 420);
             this.dataGridSong.TabIndex = 11;
             this.dataGridSong.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSong_CellContentClick);
+            // 
+            // ColumnIdSong
+            // 
+            this.ColumnIdSong.HeaderText = "Id";
+            this.ColumnIdSong.Name = "ColumnIdSong";
+            this.ColumnIdSong.ReadOnly = true;
+            this.ColumnIdSong.Width = 50;
+            // 
+            // ColumnNameSong
+            // 
+            this.ColumnNameSong.HeaderText = "Name";
+            this.ColumnNameSong.Name = "ColumnNameSong";
+            this.ColumnNameSong.ReadOnly = true;
+            this.ColumnNameSong.Width = 165;
+            // 
+            // ColumnCategorySong
+            // 
+            this.ColumnCategorySong.HeaderText = "Category";
+            this.ColumnCategorySong.Name = "ColumnCategorySong";
+            this.ColumnCategorySong.ReadOnly = true;
+            this.ColumnCategorySong.Width = 85;
+            // 
+            // ColumnAuthorSong
+            // 
+            this.ColumnAuthorSong.HeaderText = "Author";
+            this.ColumnAuthorSong.Name = "ColumnAuthorSong";
+            this.ColumnAuthorSong.ReadOnly = true;
+            this.ColumnAuthorSong.Width = 150;
+            // 
+            // ColumnAlbumSong
+            // 
+            this.ColumnAlbumSong.HeaderText = "Album";
+            this.ColumnAlbumSong.Name = "ColumnAlbumSong";
+            this.ColumnAlbumSong.ReadOnly = true;
+            // 
+            // ColumnTotalDurationSong
+            // 
+            this.ColumnTotalDurationSong.HeaderText = "Total Duration";
+            this.ColumnTotalDurationSong.Name = "ColumnTotalDurationSong";
+            this.ColumnTotalDurationSong.ReadOnly = true;
+            this.ColumnTotalDurationSong.Width = 75;
             // 
             // textTotalDurationSong
             // 
@@ -787,6 +848,33 @@
             this.dataGridPlaylist.TabIndex = 12;
             this.dataGridPlaylist.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridPlaylist_CellContentClick);
             // 
+            // ColumnIdPlaylist
+            // 
+            this.ColumnIdPlaylist.HeaderText = "Id";
+            this.ColumnIdPlaylist.Name = "ColumnIdPlaylist";
+            this.ColumnIdPlaylist.ReadOnly = true;
+            this.ColumnIdPlaylist.Width = 50;
+            // 
+            // ColumnNamePlaylist
+            // 
+            this.ColumnNamePlaylist.HeaderText = "Name";
+            this.ColumnNamePlaylist.Name = "ColumnNamePlaylist";
+            this.ColumnNamePlaylist.ReadOnly = true;
+            this.ColumnNamePlaylist.Width = 125;
+            // 
+            // ColumnWeatherPlaylist
+            // 
+            this.ColumnWeatherPlaylist.HeaderText = "Weather";
+            this.ColumnWeatherPlaylist.Name = "ColumnWeatherPlaylist";
+            this.ColumnWeatherPlaylist.ReadOnly = true;
+            // 
+            // ColumnDurationPlaylist
+            // 
+            this.ColumnDurationPlaylist.HeaderText = "Duration";
+            this.ColumnDurationPlaylist.Name = "ColumnDurationPlaylist";
+            this.ColumnDurationPlaylist.ReadOnly = true;
+            this.ColumnDurationPlaylist.Width = 75;
+            // 
             // label15
             // 
             this.label15.AutoSize = true;
@@ -1049,89 +1137,22 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
-            // ColumnIdPlaylist
+            // txtSearchSongs
             // 
-            this.ColumnIdPlaylist.HeaderText = "Id";
-            this.ColumnIdPlaylist.Name = "ColumnIdPlaylist";
-            this.ColumnIdPlaylist.ReadOnly = true;
-            this.ColumnIdPlaylist.Width = 50;
+            this.txtSearchSongs.Location = new System.Drawing.Point(651, 21);
+            this.txtSearchSongs.Name = "txtSearchSongs";
+            this.txtSearchSongs.Size = new System.Drawing.Size(300, 23);
+            this.txtSearchSongs.TabIndex = 22;
             // 
-            // ColumnNamePlaylist
+            // button1
             // 
-            this.ColumnNamePlaylist.HeaderText = "Name";
-            this.ColumnNamePlaylist.Name = "ColumnNamePlaylist";
-            this.ColumnNamePlaylist.ReadOnly = true;
-            this.ColumnNamePlaylist.Width = 125;
-            // 
-            // ColumnWeatherPlaylist
-            // 
-            this.ColumnWeatherPlaylist.HeaderText = "Weather";
-            this.ColumnWeatherPlaylist.Name = "ColumnWeatherPlaylist";
-            this.ColumnWeatherPlaylist.ReadOnly = true;
-            // 
-            // ColumnDurationPlaylist
-            // 
-            this.ColumnDurationPlaylist.HeaderText = "Duration";
-            this.ColumnDurationPlaylist.Name = "ColumnDurationPlaylist";
-            this.ColumnDurationPlaylist.ReadOnly = true;
-            this.ColumnDurationPlaylist.Width = 75;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(10, 220);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(52, 15);
-            this.label21.TabIndex = 20;
-            this.label21.Text = "Album:";
-            // 
-            // textAlbumSong
-            // 
-            this.textAlbumSong.Location = new System.Drawing.Point(10, 240);
-            this.textAlbumSong.Name = "textAlbumSong";
-            this.textAlbumSong.Size = new System.Drawing.Size(300, 23);
-            this.textAlbumSong.TabIndex = 21;
-            // 
-            // ColumnIdSong
-            // 
-            this.ColumnIdSong.HeaderText = "Id";
-            this.ColumnIdSong.Name = "ColumnIdSong";
-            this.ColumnIdSong.ReadOnly = true;
-            this.ColumnIdSong.Width = 50;
-            // 
-            // ColumnNameSong
-            // 
-            this.ColumnNameSong.HeaderText = "Name";
-            this.ColumnNameSong.Name = "ColumnNameSong";
-            this.ColumnNameSong.ReadOnly = true;
-            this.ColumnNameSong.Width = 165;
-            // 
-            // ColumnCategorySong
-            // 
-            this.ColumnCategorySong.HeaderText = "Category";
-            this.ColumnCategorySong.Name = "ColumnCategorySong";
-            this.ColumnCategorySong.ReadOnly = true;
-            this.ColumnCategorySong.Width = 85;
-            // 
-            // ColumnAuthorSong
-            // 
-            this.ColumnAuthorSong.HeaderText = "Author";
-            this.ColumnAuthorSong.Name = "ColumnAuthorSong";
-            this.ColumnAuthorSong.ReadOnly = true;
-            this.ColumnAuthorSong.Width = 150;
-            // 
-            // ColumnAlbumSong
-            // 
-            this.ColumnAlbumSong.HeaderText = "Album";
-            this.ColumnAlbumSong.Name = "ColumnAlbumSong";
-            this.ColumnAlbumSong.ReadOnly = true;
-            // 
-            // ColumnTotalDurationSong
-            // 
-            this.ColumnTotalDurationSong.HeaderText = "Total Duration";
-            this.ColumnTotalDurationSong.Name = "ColumnTotalDurationSong";
-            this.ColumnTotalDurationSong.ReadOnly = true;
-            this.ColumnTotalDurationSong.Width = 75;
+            this.button1.Location = new System.Drawing.Point(968, 20);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 23;
+            this.button1.Text = "Search";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // UIAdmin
             // 
@@ -1266,5 +1287,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnAuthorSong;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnAlbumSong;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTotalDurationSong;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtSearchSongs;
     }
 }

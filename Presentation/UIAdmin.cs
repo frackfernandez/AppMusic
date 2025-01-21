@@ -1033,5 +1033,22 @@ namespace Presentation
             int seconds = int.Parse(parts[1]);
             return new TimeSpan(0, minutes, seconds);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var key = txtSearchSongs.Text.ToUpper();
+
+            dataGridSong.Rows.Clear();
+
+            var listSong = appSong.ReadSong();
+
+            foreach (var song in listSong)
+            {
+                if (song.Name.ToUpper().Contains(key))
+                {
+                    dataGridSong.Rows.Add(song.Id.ToString(), song.Name.ToString(), song.Category.ToString(), song.Author.Name.ToString(), song.Album.ToString(), song.TotalDuration.ToString());
+                }
+            }
+        }
     }
 }
