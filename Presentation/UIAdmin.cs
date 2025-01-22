@@ -1050,5 +1050,22 @@ namespace Presentation
                 }
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var key = txtSearchAuthor.Text.ToUpper();
+
+            dataGridAuthor.Rows.Clear();
+
+            var listAuthor = appAuthor.ReadAuthor();
+
+            foreach (var row in listAuthor)
+            {
+                if (row.Name.ToUpper().Contains(key))
+                {
+                    dataGridAuthor.Rows.Add(row.Id.ToString(), row.Name.ToString());
+                }
+            }
+        }
     }
 }

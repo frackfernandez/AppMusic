@@ -43,6 +43,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.txtSearchSongs = new System.Windows.Forms.TextBox();
             this.textAlbumSong = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.textFileSong = new System.Windows.Forms.TextBox();
@@ -129,8 +131,8 @@
             this.textIdUser = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.btnBack = new System.Windows.Forms.Button();
-            this.txtSearchSongs = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.txtSearchAuthor = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAuthor)).BeginInit();
@@ -162,6 +164,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.button2);
+            this.tabPage1.Controls.Add(this.txtSearchAuthor);
             this.tabPage1.Controls.Add(this.btnDeleteAuthor);
             this.tabPage1.Controls.Add(this.btnUpdateAuthor);
             this.tabPage1.Controls.Add(this.btnClearAuthor);
@@ -323,6 +327,23 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Songs";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(968, 20);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 23;
+            this.button1.Text = "Search";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // txtSearchSongs
+            // 
+            this.txtSearchSongs.Location = new System.Drawing.Point(651, 20);
+            this.txtSearchSongs.Name = "txtSearchSongs";
+            this.txtSearchSongs.Size = new System.Drawing.Size(300, 23);
+            this.txtSearchSongs.TabIndex = 22;
             // 
             // textAlbumSong
             // 
@@ -1137,22 +1158,22 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
-            // txtSearchSongs
+            // txtSearchAuthor
             // 
-            this.txtSearchSongs.Location = new System.Drawing.Point(651, 21);
-            this.txtSearchSongs.Name = "txtSearchSongs";
-            this.txtSearchSongs.Size = new System.Drawing.Size(300, 23);
-            this.txtSearchSongs.TabIndex = 22;
+            this.txtSearchAuthor.Location = new System.Drawing.Point(803, 20);
+            this.txtSearchAuthor.Name = "txtSearchAuthor";
+            this.txtSearchAuthor.Size = new System.Drawing.Size(150, 23);
+            this.txtSearchAuthor.TabIndex = 10;
             // 
-            // button1
+            // button2
             // 
-            this.button1.Location = new System.Drawing.Point(968, 20);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 23;
-            this.button1.Text = "Search";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button2.Location = new System.Drawing.Point(969, 20);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 11;
+            this.button2.Text = "Search";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // UIAdmin
             // 
@@ -1289,5 +1310,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTotalDurationSong;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox txtSearchSongs;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox txtSearchAuthor;
     }
 }
